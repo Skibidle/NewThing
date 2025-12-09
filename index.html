@@ -1,1 +1,484 @@
-<!DOCTYPE html><html lang="en"><head> <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4302155194633477" crossorigin="anonymous"></script> <script src="../js/fetchington.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y3T9NZGP8"></script> <script> window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-9Y3T9NZGP8'); </script></head><body> <script> fetchData(1); </script></body></html>
+-<!DOCTYPE html><html lang="en"><head> <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4302155194633477" crossorigin="anonymous"></script> <script src="../js/fetchington.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y3T9NZGP8"></script> <script> window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-9Y3T9NZGP8'); </script></head><body> <script> fetchData(1); </script></body></html>
++<!DOCTYPE html>
++<html lang="en">
++<head>
++  <meta charset="UTF-8" />
++  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
++  <title>LitRPG Wilderness Concept</title>
++  <link rel="preconnect" href="https://fonts.googleapis.com">
++  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
++  <style>
++    :root {
++      --ink: #0b0f1a;
++      --midnight: #0f1b2e;
++      --crystal: #69d0ff;
++      --violet: #7c6bff;
++      --fern: #2fa77a;
++      --mist: #94a6c2;
++      --card: rgba(13, 22, 36, 0.75);
++      --glow: 0 0 25px rgba(105, 208, 255, 0.35);
++    }
++
++    * {
++      box-sizing: border-box;
++    }
++
++    body {
++      margin: 0;
++      min-height: 100vh;
++      font-family: 'Inter', system-ui, -apple-system, sans-serif;
++      background: radial-gradient(circle at 20% 20%, rgba(105, 208, 255, 0.08), transparent 35%),
++                  radial-gradient(circle at 80% 10%, rgba(124, 107, 255, 0.12), transparent 40%),
++                  linear-gradient(145deg, #060a13 0%, #0c1422 50%, #0f1b2e 100%);
++      color: #e8f3ff;
++      overflow-x: hidden;
++    }
++
++    header {
++      padding: 28px clamp(18px, 2vw, 36px) 12px;
++      display: flex;
++      align-items: center;
++      justify-content: space-between;
++      gap: 16px;
++      position: sticky;
++      top: 0;
++      background: linear-gradient(180deg, rgba(12, 20, 34, 0.92) 0%, rgba(12, 20, 34, 0.65) 70%, transparent);
++      backdrop-filter: blur(10px);
++      z-index: 10;
++    }
++
++    .title {
++      display: flex;
++      align-items: baseline;
++      gap: 10px;
++    }
++
++    .title h1 {
++      margin: 0;
++      font-family: 'Rajdhani', sans-serif;
++      letter-spacing: 0.08em;
++      font-size: clamp(28px, 4vw, 40px);
++      text-transform: uppercase;
++    }
++
++    .pill {
++      padding: 6px 12px;
++      border-radius: 999px;
++      border: 1px solid rgba(105, 208, 255, 0.4);
++      color: #bce9ff;
++      background: rgba(105, 208, 255, 0.08);
++      font-size: 13px;
++      text-transform: uppercase;
++      letter-spacing: 0.08em;
++    }
++
++    main {
++      padding: clamp(20px, 5vw, 60px);
++      display: grid;
++      gap: 32px;
++      max-width: 1200px;
++      margin: 0 auto 80px;
++    }
++
++    .hero {
++      position: relative;
++      overflow: hidden;
++      border: 1px solid rgba(255, 255, 255, 0.08);
++      border-radius: 22px;
++      background: linear-gradient(135deg, rgba(47, 167, 122, 0.08), rgba(124, 107, 255, 0.08)), #0b0f1a;
++      box-shadow: var(--glow), 0 30px 70px rgba(0, 0, 0, 0.35);
++      isolation: isolate;
++    }
++
++    .hero::before,
++    .hero::after {
++      content: '';
++      position: absolute;
++      inset: 0;
++      background: radial-gradient(120% 80% at 70% 20%, rgba(105, 208, 255, 0.14), transparent 50%),
++                  radial-gradient(70% 60% at 20% 70%, rgba(47, 167, 122, 0.12), transparent 55%);
++      z-index: 0;
++    }
++
++    .hero::after {
++      filter: blur(30px);
++      opacity: 0.7;
++      mix-blend-mode: screen;
++    }
++
++    .hero-content {
++      position: relative;
++      z-index: 1;
++      padding: clamp(24px, 5vw, 42px);
++      display: grid;
++      gap: 24px;
++      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
++      align-items: start;
++    }
++
++    .hero-description {
++      display: grid;
++      gap: 12px;
++    }
++
++    .badge-row {
++      display: flex;
++      flex-wrap: wrap;
++      gap: 8px;
++    }
++
++    .badge {
++      padding: 6px 10px;
++      border-radius: 10px;
++      border: 1px solid rgba(124, 107, 255, 0.35);
++      background: rgba(12, 20, 34, 0.55);
++      color: #c9bdff;
++      font-size: 13px;
++      letter-spacing: 0.04em;
++    }
++
++    .hero-description h2 {
++      margin: 0;
++      font-family: 'Rajdhani', sans-serif;
++      font-size: clamp(24px, 3vw, 32px);
++      letter-spacing: 0.04em;
++    }
++
++    .hero-description p {
++      margin: 0;
++      line-height: 1.6;
++      color: #d9e9ff;
++    }
++
++    .system-panel {
++      background: var(--card);
++      border: 1px solid rgba(105, 208, 255, 0.35);
++      border-radius: 16px;
++      padding: 18px;
++      box-shadow: var(--glow);
++      backdrop-filter: blur(8px);
++    }
++
++    .panel-title {
++      margin: 0 0 12px;
++      font-family: 'Rajdhani', sans-serif;
++      letter-spacing: 0.06em;
++      text-transform: uppercase;
++      font-size: 15px;
++      color: #bce9ff;
++    }
++
++    .stat-grid {
++      display: grid;
++      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
++      gap: 10px;
++    }
++
++    .stat-card {
++      padding: 12px;
++      border-radius: 12px;
++      border: 1px solid rgba(255, 255, 255, 0.08);
++      background: rgba(255, 255, 255, 0.02);
++      display: flex;
++      align-items: center;
++      justify-content: space-between;
++      gap: 12px;
++    }
++
++    .stat-label {
++      font-size: 13px;
++      letter-spacing: 0.06em;
++      color: #8fb4d6;
++      text-transform: uppercase;
++    }
++
++    .stat-value {
++      font-family: 'Rajdhani', sans-serif;
++      font-size: 20px;
++      color: #e7f5ff;
++    }
++
++    .meter {
++      height: 6px;
++      width: 100%;
++      border-radius: 999px;
++      background: rgba(255, 255, 255, 0.06);
++      position: relative;
++      overflow: hidden;
++    }
++
++    .meter span {
++      position: absolute;
++      inset: 0;
++      border-radius: inherit;
++      background: linear-gradient(90deg, rgba(105, 208, 255, 0.9), rgba(124, 107, 255, 0.9));
++      box-shadow: 0 0 12px rgba(105, 208, 255, 0.45);
++    }
++
++    .grid-2 {
++      display: grid;
++      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
++      gap: 20px;
++    }
++
++    .list {
++      display: grid;
++      gap: 10px;
++      padding: 0;
++      margin: 0;
++      list-style: none;
++    }
++
++    .list li {
++      padding: 12px;
++      border-radius: 12px;
++      border: 1px solid rgba(255, 255, 255, 0.06);
++      background: rgba(255, 255, 255, 0.02);
++      display: grid;
++      gap: 6px;
++    }
++
++    .list strong {
++      color: #dceeff;
++      letter-spacing: 0.04em;
++    }
++
++    .note {
++      font-size: 13px;
++      color: #9fb7d5;
++      line-height: 1.5;
++    }
++
++    .callout {
++      border-left: 3px solid var(--crystal);
++      padding-left: 12px;
++    }
++
++    .scene {
++      border-radius: 18px;
++      border: 1px solid rgba(255, 255, 255, 0.08);
++      background: linear-gradient(180deg, rgba(12, 20, 34, 0.85), rgba(6, 10, 19, 0.92)),
++                  radial-gradient(120% 120% at 70% 30%, rgba(105, 208, 255, 0.12), transparent 55%);
++      padding: clamp(18px, 4vw, 32px);
++      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
++    }
++
++    .scene h3 {
++      margin: 0 0 8px;
++      font-family: 'Rajdhani', sans-serif;
++      letter-spacing: 0.05em;
++      text-transform: uppercase;
++    }
++
++    .scene p {
++      margin: 0;
++      line-height: 1.7;
++    }
++
++    .chips {
++      display: flex;
++      flex-wrap: wrap;
++      gap: 8px;
++      margin-top: 12px;
++    }
++
++    .chip {
++      padding: 6px 10px;
++      border-radius: 8px;
++      background: rgba(105, 208, 255, 0.12);
++      border: 1px solid rgba(105, 208, 255, 0.4);
++      color: #c9eeff;
++      font-size: 13px;
++      letter-spacing: 0.02em;
++    }
++
++    .system-overlay {
++      display: grid;
++      gap: 14px;
++    }
++
++    .ability {
++      display: flex;
++      flex-direction: column;
++      gap: 6px;
++    }
++
++    .ability h4 {
++      margin: 0;
++      font-size: 15px;
++      letter-spacing: 0.05em;
++      font-family: 'Rajdhani', sans-serif;
++    }
++
++    .tags {
++      display: flex;
++      gap: 8px;
++      flex-wrap: wrap;
++      color: #8fd8ff;
++      font-size: 12px;
++      letter-spacing: 0.05em;
++      text-transform: uppercase;
++    }
++
++    footer {
++      padding: 0 clamp(20px, 5vw, 60px) 60px;
++      color: #7d94b6;
++      text-align: center;
++      font-size: 13px;
++    }
++  </style>
++</head>
++<body>
++  <header>
++    <div class="title">
++      <h1>Primal System</h1>
++      <span class="pill">LitRPG Wilderness Vision</span>
++    </div>
++    <div class="pill">No timers · No countdowns</div>
++  </header>
++
++  <main>
++    <section class="hero">
++      <div class="hero-content">
++        <div class="hero-description">
++          <div class="badge-row">
++            <span class="badge">Mana-Infused Wilds</span>
++            <span class="badge">Lone Protagonist</span>
++            <span class="badge">Cinematic Survival</span>
++          </div>
++          <h2>A deadly stretch of forest towers above fractured mana crystals, colossal trees, and fog-shrouded valleys.</h2>
++          <p>One hunter advances alone through an evolving frontier—guided only by a floating blue System that tallies every level-up, Class evolution, and stat distribution. No clocks, no respite. Just survival, progression, and the thrill of combat against hydra-serpents, shadow panthers, eldritch wolves, and insectoid horrors. The atmosphere hums with glowing blues, deep purples, and forest greens; every ruin whispers at ancient power while the mist hides new threats.</p>
++          <div class="note callout">Visual tone: dark, semi-realistic, and slightly otherworldly. Blend high-fantasy UI glow with the grit of a hostile wilderness.</div>
++        </div>
++
++        <div class="system-overlay">
++          <div class="system-panel">
++            <p class="panel-title">System // Status Sheet</p>
++            <div class="stat-grid">
++              <div class="stat-card">
++                <div>
++                  <div class="stat-label">Strength</div>
++                  <div class="stat-value">38</div>
++                </div>
++                <div class="meter"><span style="width:58%"></span></div>
++              </div>
++              <div class="stat-card">
++                <div>
++                  <div class="stat-label">Dexterity</div>
++                  <div class="stat-value">44</div>
++                </div>
++                <div class="meter"><span style="width:66%"></span></div>
++              </div>
++              <div class="stat-card">
++                <div>
++                  <div class="stat-label">Perception</div>
++                  <div class="stat-value">51</div>
++                </div>
++                <div class="meter"><span style="width:78%"></span></div>
++              </div>
++              <div class="stat-card">
++                <div>
++                  <div class="stat-label">Mana</div>
++                  <div class="stat-value">62</div>
++                </div>
++                <div class="meter"><span style="width:92%"></span></div>
++              </div>
++              <div class="stat-card">
++                <div>
++                  <div class="stat-label">Vitality</div>
++                  <div class="stat-value">47</div>
++                </div>
++                <div class="meter"><span style="width:70%"></span></div>
++              </div>
++            </div>
++            <div class="chips">
++              <span class="chip">Class Advance: Spectral Ranger</span>
++              <span class="chip">Skill Points Ready: 3</span>
++              <span class="chip">System Sync: Active</span>
++            </div>
++          </div>
++
++          <div class="grid-2">
++            <div class="system-panel">
++              <p class="panel-title">Abilities // Mana Techniques</p>
++              <div class="ability">
++                <h4>Mana Bolt — precision burst</h4>
++                <div class="tags">Mana Bolt</div>
++                <p class="note">Condenses ambient mana into serrated projectiles. Penetrates hydra-serpent scales; leaves cobalt afterglow across fractured crystals.</p>
++              </div>
++              <div class="ability">
++                <h4>Heightened Perception — expanding awareness</h4>
++                <div class="tags">Perception · Tracking</div>
++                <p class="note">Paints hostile silhouettes through mist and roots, letting the hunter read intent from shadow panther muscle tension before they pounce.</p>
++              </div>
++              <div class="ability">
++                <h4>Slipstream Step — kinetic surge</h4>
++                <div class="tags">Movement · Mana Flow</div>
++                <p class="note">Channels mana through joints for silent, accelerated movement between colossal trunks, dodging eldritch wolves mid-lunge.</p>
++              </div>
++            </div>
++
++            <div class="system-panel">
++              <p class="panel-title">Loot & Evolution</p>
++              <ul class="list">
++                <li>
++                  <strong>Loot Window — Hydra Serpent</strong>
++                  <span class="note">Prismatic Fang (Rare), Venom Gland (Corrosive), Obsidian Scales (Armor Crafting)</span>
++                </li>
++                <li>
++                  <strong>Skill Evolution Choice</strong>
++                  <span class="note">Upgrade Mana Bolt → <em>Splinter Volley</em> (forked shots) or <em>Core Lance</em> (piercing beam). Selection applies instantly; no timers.</span>
++                </li>
++                <li>
++                  <strong>Ruin Cache — Obsidian Vault</strong>
++                  <span class="note">Ancient Focus Crystal (Mana Efficiency), Map Fragment (Forgotten Valley), Carved Totem (Summons flicker-wolves).</span>
++                </li>
++              </ul>
++            </div>
++          </div>
++        </div>
++      </div>
++    </section>
++
++    <section class="grid-2">
++      <div class="scene">
++        <h3>Combat Snapshot</h3>
++        <p>Under dripping caverns, the hunter launches a volley of mana bolts that ricochet off crystal shards, scoring a hydra-serpent as shadow panthers circle. Slipstream Step leaves streaks of violet light across wet stone while Heightened Perception outlines every claw and fang. No countdowns—just instinct, mana, and the System urging growth.</p>
++      </div>
++      <div class="scene">
++        <h3>Wilderness Mood</h3>
++        <p>Glowing ferns sway beside fractured mana crystals. Colossal trees pierce low fog. Ancient ruins crackle with dormant scripts and drifting wisps of blue light. Eldritch wolves stalk the perimeter; insectoid horrors chitter from hollow trunks. Every direction promises danger and discovery.</p>
++      </div>
++    </section>
++
++    <section class="system-panel">
++      <p class="panel-title">Progression Thread</p>
++      <div class="list">
++        <div class="list">
++          <li>
++            <strong>Hunting & Tracking</strong>
++            <span class="note">Perception-driven routes through misty valleys; mana trails indicate recent predator movements.</span>
++          </li>
++          <li>
++            <strong>Crafting & Survival</strong>
++            <span class="note">Obsidian scales form silent armor; venom glands fuel traps; mana-infused wood becomes bow limbs that glow cobalt.</span>
++          </li>
++          <li>
++            <strong>Exploration & Ruins</strong>
++            <span class="note">Collapsed bridges over abyssal caverns, glyph-lit vaults, and forgotten altars that whisper new Class branches.</span>
++          </li>
++          <li>
++            <strong>Growth & Resolve</strong>
++            <span class="note">Every kill nudges the System—stat allocation, ability refinement, Class advancement. The hunter’s will shapes power; no waiting bars, no cooldown clocks.</span>
++          </li>
++        </div>
++      </div>
++    </section>
++  </main>
++
++  <footer>
++    This concept is designed to feel immersive, intense, and mysterious—an unforgiving LitRPG world where the System guides power without ever flashing a timer.
++  </footer>
++</body>
++</html>
