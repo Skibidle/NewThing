@@ -1,484 +1,580 @@
--<!DOCTYPE html><html lang="en"><head> <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4302155194633477" crossorigin="anonymous"></script> <script src="../js/fetchington.js"></script> <script async src="https://www.googletagmanager.com/gtag/js?id=G-9Y3T9NZGP8"></script> <script> window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-9Y3T9NZGP8'); </script></head><body> <script> fetchData(1); </script></body></html>
-+<!DOCTYPE html>
-+<html lang="en">
-+<head>
-+  <meta charset="UTF-8" />
-+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-+  <title>LitRPG Wilderness Concept</title>
-+  <link rel="preconnect" href="https://fonts.googleapis.com">
-+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-+  <style>
-+    :root {
-+      --ink: #0b0f1a;
-+      --midnight: #0f1b2e;
-+      --crystal: #69d0ff;
-+      --violet: #7c6bff;
-+      --fern: #2fa77a;
-+      --mist: #94a6c2;
-+      --card: rgba(13, 22, 36, 0.75);
-+      --glow: 0 0 25px rgba(105, 208, 255, 0.35);
-+    }
-+
-+    * {
-+      box-sizing: border-box;
-+    }
-+
-+    body {
-+      margin: 0;
-+      min-height: 100vh;
-+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-+      background: radial-gradient(circle at 20% 20%, rgba(105, 208, 255, 0.08), transparent 35%),
-+                  radial-gradient(circle at 80% 10%, rgba(124, 107, 255, 0.12), transparent 40%),
-+                  linear-gradient(145deg, #060a13 0%, #0c1422 50%, #0f1b2e 100%);
-+      color: #e8f3ff;
-+      overflow-x: hidden;
-+    }
-+
-+    header {
-+      padding: 28px clamp(18px, 2vw, 36px) 12px;
-+      display: flex;
-+      align-items: center;
-+      justify-content: space-between;
-+      gap: 16px;
-+      position: sticky;
-+      top: 0;
-+      background: linear-gradient(180deg, rgba(12, 20, 34, 0.92) 0%, rgba(12, 20, 34, 0.65) 70%, transparent);
-+      backdrop-filter: blur(10px);
-+      z-index: 10;
-+    }
-+
-+    .title {
-+      display: flex;
-+      align-items: baseline;
-+      gap: 10px;
-+    }
-+
-+    .title h1 {
-+      margin: 0;
-+      font-family: 'Rajdhani', sans-serif;
-+      letter-spacing: 0.08em;
-+      font-size: clamp(28px, 4vw, 40px);
-+      text-transform: uppercase;
-+    }
-+
-+    .pill {
-+      padding: 6px 12px;
-+      border-radius: 999px;
-+      border: 1px solid rgba(105, 208, 255, 0.4);
-+      color: #bce9ff;
-+      background: rgba(105, 208, 255, 0.08);
-+      font-size: 13px;
-+      text-transform: uppercase;
-+      letter-spacing: 0.08em;
-+    }
-+
-+    main {
-+      padding: clamp(20px, 5vw, 60px);
-+      display: grid;
-+      gap: 32px;
-+      max-width: 1200px;
-+      margin: 0 auto 80px;
-+    }
-+
-+    .hero {
-+      position: relative;
-+      overflow: hidden;
-+      border: 1px solid rgba(255, 255, 255, 0.08);
-+      border-radius: 22px;
-+      background: linear-gradient(135deg, rgba(47, 167, 122, 0.08), rgba(124, 107, 255, 0.08)), #0b0f1a;
-+      box-shadow: var(--glow), 0 30px 70px rgba(0, 0, 0, 0.35);
-+      isolation: isolate;
-+    }
-+
-+    .hero::before,
-+    .hero::after {
-+      content: '';
-+      position: absolute;
-+      inset: 0;
-+      background: radial-gradient(120% 80% at 70% 20%, rgba(105, 208, 255, 0.14), transparent 50%),
-+                  radial-gradient(70% 60% at 20% 70%, rgba(47, 167, 122, 0.12), transparent 55%);
-+      z-index: 0;
-+    }
-+
-+    .hero::after {
-+      filter: blur(30px);
-+      opacity: 0.7;
-+      mix-blend-mode: screen;
-+    }
-+
-+    .hero-content {
-+      position: relative;
-+      z-index: 1;
-+      padding: clamp(24px, 5vw, 42px);
-+      display: grid;
-+      gap: 24px;
-+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-+      align-items: start;
-+    }
-+
-+    .hero-description {
-+      display: grid;
-+      gap: 12px;
-+    }
-+
-+    .badge-row {
-+      display: flex;
-+      flex-wrap: wrap;
-+      gap: 8px;
-+    }
-+
-+    .badge {
-+      padding: 6px 10px;
-+      border-radius: 10px;
-+      border: 1px solid rgba(124, 107, 255, 0.35);
-+      background: rgba(12, 20, 34, 0.55);
-+      color: #c9bdff;
-+      font-size: 13px;
-+      letter-spacing: 0.04em;
-+    }
-+
-+    .hero-description h2 {
-+      margin: 0;
-+      font-family: 'Rajdhani', sans-serif;
-+      font-size: clamp(24px, 3vw, 32px);
-+      letter-spacing: 0.04em;
-+    }
-+
-+    .hero-description p {
-+      margin: 0;
-+      line-height: 1.6;
-+      color: #d9e9ff;
-+    }
-+
-+    .system-panel {
-+      background: var(--card);
-+      border: 1px solid rgba(105, 208, 255, 0.35);
-+      border-radius: 16px;
-+      padding: 18px;
-+      box-shadow: var(--glow);
-+      backdrop-filter: blur(8px);
-+    }
-+
-+    .panel-title {
-+      margin: 0 0 12px;
-+      font-family: 'Rajdhani', sans-serif;
-+      letter-spacing: 0.06em;
-+      text-transform: uppercase;
-+      font-size: 15px;
-+      color: #bce9ff;
-+    }
-+
-+    .stat-grid {
-+      display: grid;
-+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-+      gap: 10px;
-+    }
-+
-+    .stat-card {
-+      padding: 12px;
-+      border-radius: 12px;
-+      border: 1px solid rgba(255, 255, 255, 0.08);
-+      background: rgba(255, 255, 255, 0.02);
-+      display: flex;
-+      align-items: center;
-+      justify-content: space-between;
-+      gap: 12px;
-+    }
-+
-+    .stat-label {
-+      font-size: 13px;
-+      letter-spacing: 0.06em;
-+      color: #8fb4d6;
-+      text-transform: uppercase;
-+    }
-+
-+    .stat-value {
-+      font-family: 'Rajdhani', sans-serif;
-+      font-size: 20px;
-+      color: #e7f5ff;
-+    }
-+
-+    .meter {
-+      height: 6px;
-+      width: 100%;
-+      border-radius: 999px;
-+      background: rgba(255, 255, 255, 0.06);
-+      position: relative;
-+      overflow: hidden;
-+    }
-+
-+    .meter span {
-+      position: absolute;
-+      inset: 0;
-+      border-radius: inherit;
-+      background: linear-gradient(90deg, rgba(105, 208, 255, 0.9), rgba(124, 107, 255, 0.9));
-+      box-shadow: 0 0 12px rgba(105, 208, 255, 0.45);
-+    }
-+
-+    .grid-2 {
-+      display: grid;
-+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-+      gap: 20px;
-+    }
-+
-+    .list {
-+      display: grid;
-+      gap: 10px;
-+      padding: 0;
-+      margin: 0;
-+      list-style: none;
-+    }
-+
-+    .list li {
-+      padding: 12px;
-+      border-radius: 12px;
-+      border: 1px solid rgba(255, 255, 255, 0.06);
-+      background: rgba(255, 255, 255, 0.02);
-+      display: grid;
-+      gap: 6px;
-+    }
-+
-+    .list strong {
-+      color: #dceeff;
-+      letter-spacing: 0.04em;
-+    }
-+
-+    .note {
-+      font-size: 13px;
-+      color: #9fb7d5;
-+      line-height: 1.5;
-+    }
-+
-+    .callout {
-+      border-left: 3px solid var(--crystal);
-+      padding-left: 12px;
-+    }
-+
-+    .scene {
-+      border-radius: 18px;
-+      border: 1px solid rgba(255, 255, 255, 0.08);
-+      background: linear-gradient(180deg, rgba(12, 20, 34, 0.85), rgba(6, 10, 19, 0.92)),
-+                  radial-gradient(120% 120% at 70% 30%, rgba(105, 208, 255, 0.12), transparent 55%);
-+      padding: clamp(18px, 4vw, 32px);
-+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
-+    }
-+
-+    .scene h3 {
-+      margin: 0 0 8px;
-+      font-family: 'Rajdhani', sans-serif;
-+      letter-spacing: 0.05em;
-+      text-transform: uppercase;
-+    }
-+
-+    .scene p {
-+      margin: 0;
-+      line-height: 1.7;
-+    }
-+
-+    .chips {
-+      display: flex;
-+      flex-wrap: wrap;
-+      gap: 8px;
-+      margin-top: 12px;
-+    }
-+
-+    .chip {
-+      padding: 6px 10px;
-+      border-radius: 8px;
-+      background: rgba(105, 208, 255, 0.12);
-+      border: 1px solid rgba(105, 208, 255, 0.4);
-+      color: #c9eeff;
-+      font-size: 13px;
-+      letter-spacing: 0.02em;
-+    }
-+
-+    .system-overlay {
-+      display: grid;
-+      gap: 14px;
-+    }
-+
-+    .ability {
-+      display: flex;
-+      flex-direction: column;
-+      gap: 6px;
-+    }
-+
-+    .ability h4 {
-+      margin: 0;
-+      font-size: 15px;
-+      letter-spacing: 0.05em;
-+      font-family: 'Rajdhani', sans-serif;
-+    }
-+
-+    .tags {
-+      display: flex;
-+      gap: 8px;
-+      flex-wrap: wrap;
-+      color: #8fd8ff;
-+      font-size: 12px;
-+      letter-spacing: 0.05em;
-+      text-transform: uppercase;
-+    }
-+
-+    footer {
-+      padding: 0 clamp(20px, 5vw, 60px) 60px;
-+      color: #7d94b6;
-+      text-align: center;
-+      font-size: 13px;
-+    }
-+  </style>
-+</head>
-+<body>
-+  <header>
-+    <div class="title">
-+      <h1>Primal System</h1>
-+      <span class="pill">LitRPG Wilderness Vision</span>
-+    </div>
-+    <div class="pill">No timers · No countdowns</div>
-+  </header>
-+
-+  <main>
-+    <section class="hero">
-+      <div class="hero-content">
-+        <div class="hero-description">
-+          <div class="badge-row">
-+            <span class="badge">Mana-Infused Wilds</span>
-+            <span class="badge">Lone Protagonist</span>
-+            <span class="badge">Cinematic Survival</span>
-+          </div>
-+          <h2>A deadly stretch of forest towers above fractured mana crystals, colossal trees, and fog-shrouded valleys.</h2>
-+          <p>One hunter advances alone through an evolving frontier—guided only by a floating blue System that tallies every level-up, Class evolution, and stat distribution. No clocks, no respite. Just survival, progression, and the thrill of combat against hydra-serpents, shadow panthers, eldritch wolves, and insectoid horrors. The atmosphere hums with glowing blues, deep purples, and forest greens; every ruin whispers at ancient power while the mist hides new threats.</p>
-+          <div class="note callout">Visual tone: dark, semi-realistic, and slightly otherworldly. Blend high-fantasy UI glow with the grit of a hostile wilderness.</div>
-+        </div>
-+
-+        <div class="system-overlay">
-+          <div class="system-panel">
-+            <p class="panel-title">System // Status Sheet</p>
-+            <div class="stat-grid">
-+              <div class="stat-card">
-+                <div>
-+                  <div class="stat-label">Strength</div>
-+                  <div class="stat-value">38</div>
-+                </div>
-+                <div class="meter"><span style="width:58%"></span></div>
-+              </div>
-+              <div class="stat-card">
-+                <div>
-+                  <div class="stat-label">Dexterity</div>
-+                  <div class="stat-value">44</div>
-+                </div>
-+                <div class="meter"><span style="width:66%"></span></div>
-+              </div>
-+              <div class="stat-card">
-+                <div>
-+                  <div class="stat-label">Perception</div>
-+                  <div class="stat-value">51</div>
-+                </div>
-+                <div class="meter"><span style="width:78%"></span></div>
-+              </div>
-+              <div class="stat-card">
-+                <div>
-+                  <div class="stat-label">Mana</div>
-+                  <div class="stat-value">62</div>
-+                </div>
-+                <div class="meter"><span style="width:92%"></span></div>
-+              </div>
-+              <div class="stat-card">
-+                <div>
-+                  <div class="stat-label">Vitality</div>
-+                  <div class="stat-value">47</div>
-+                </div>
-+                <div class="meter"><span style="width:70%"></span></div>
-+              </div>
-+            </div>
-+            <div class="chips">
-+              <span class="chip">Class Advance: Spectral Ranger</span>
-+              <span class="chip">Skill Points Ready: 3</span>
-+              <span class="chip">System Sync: Active</span>
-+            </div>
-+          </div>
-+
-+          <div class="grid-2">
-+            <div class="system-panel">
-+              <p class="panel-title">Abilities // Mana Techniques</p>
-+              <div class="ability">
-+                <h4>Mana Bolt — precision burst</h4>
-+                <div class="tags">Mana Bolt</div>
-+                <p class="note">Condenses ambient mana into serrated projectiles. Penetrates hydra-serpent scales; leaves cobalt afterglow across fractured crystals.</p>
-+              </div>
-+              <div class="ability">
-+                <h4>Heightened Perception — expanding awareness</h4>
-+                <div class="tags">Perception · Tracking</div>
-+                <p class="note">Paints hostile silhouettes through mist and roots, letting the hunter read intent from shadow panther muscle tension before they pounce.</p>
-+              </div>
-+              <div class="ability">
-+                <h4>Slipstream Step — kinetic surge</h4>
-+                <div class="tags">Movement · Mana Flow</div>
-+                <p class="note">Channels mana through joints for silent, accelerated movement between colossal trunks, dodging eldritch wolves mid-lunge.</p>
-+              </div>
-+            </div>
-+
-+            <div class="system-panel">
-+              <p class="panel-title">Loot & Evolution</p>
-+              <ul class="list">
-+                <li>
-+                  <strong>Loot Window — Hydra Serpent</strong>
-+                  <span class="note">Prismatic Fang (Rare), Venom Gland (Corrosive), Obsidian Scales (Armor Crafting)</span>
-+                </li>
-+                <li>
-+                  <strong>Skill Evolution Choice</strong>
-+                  <span class="note">Upgrade Mana Bolt → <em>Splinter Volley</em> (forked shots) or <em>Core Lance</em> (piercing beam). Selection applies instantly; no timers.</span>
-+                </li>
-+                <li>
-+                  <strong>Ruin Cache — Obsidian Vault</strong>
-+                  <span class="note">Ancient Focus Crystal (Mana Efficiency), Map Fragment (Forgotten Valley), Carved Totem (Summons flicker-wolves).</span>
-+                </li>
-+              </ul>
-+            </div>
-+          </div>
-+        </div>
-+      </div>
-+    </section>
-+
-+    <section class="grid-2">
-+      <div class="scene">
-+        <h3>Combat Snapshot</h3>
-+        <p>Under dripping caverns, the hunter launches a volley of mana bolts that ricochet off crystal shards, scoring a hydra-serpent as shadow panthers circle. Slipstream Step leaves streaks of violet light across wet stone while Heightened Perception outlines every claw and fang. No countdowns—just instinct, mana, and the System urging growth.</p>
-+      </div>
-+      <div class="scene">
-+        <h3>Wilderness Mood</h3>
-+        <p>Glowing ferns sway beside fractured mana crystals. Colossal trees pierce low fog. Ancient ruins crackle with dormant scripts and drifting wisps of blue light. Eldritch wolves stalk the perimeter; insectoid horrors chitter from hollow trunks. Every direction promises danger and discovery.</p>
-+      </div>
-+    </section>
-+
-+    <section class="system-panel">
-+      <p class="panel-title">Progression Thread</p>
-+      <div class="list">
-+        <div class="list">
-+          <li>
-+            <strong>Hunting & Tracking</strong>
-+            <span class="note">Perception-driven routes through misty valleys; mana trails indicate recent predator movements.</span>
-+          </li>
-+          <li>
-+            <strong>Crafting & Survival</strong>
-+            <span class="note">Obsidian scales form silent armor; venom glands fuel traps; mana-infused wood becomes bow limbs that glow cobalt.</span>
-+          </li>
-+          <li>
-+            <strong>Exploration & Ruins</strong>
-+            <span class="note">Collapsed bridges over abyssal caverns, glyph-lit vaults, and forgotten altars that whisper new Class branches.</span>
-+          </li>
-+          <li>
-+            <strong>Growth & Resolve</strong>
-+            <span class="note">Every kill nudges the System—stat allocation, ability refinement, Class advancement. The hunter’s will shapes power; no waiting bars, no cooldown clocks.</span>
-+          </li>
-+        </div>
-+      </div>
-+    </section>
-+  </main>
-+
-+  <footer>
-+    This concept is designed to feel immersive, intense, and mysterious—an unforgiving LitRPG world where the System guides power without ever flashing a timer.
-+  </footer>
-+</body>
-+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo Hunter — Wilderness Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0b0f1a;
+      --midnight: #0f1b2e;
+      --crystal: #69d0ff;
+      --violet: #7c6bff;
+      --fern: #2fa77a;
+      --card: rgba(13, 22, 36, 0.78);
+      --panel: rgba(13, 22, 36, 0.92);
+      --glow: 0 0 22px rgba(105, 208, 255, 0.35);
+      --text: #e8f3ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(105, 208, 255, 0.08), transparent 35%),
+                  radial-gradient(circle at 80% 10%, rgba(124, 107, 255, 0.12), transparent 40%),
+                  linear-gradient(145deg, #060a13 0%, #0c1422 50%, #0f1b2e 100%);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 24px clamp(16px, 3vw, 42px) 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, rgba(12, 20, 34, 0.92) 0%, rgba(12, 20, 34, 0.65) 70%, transparent);
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+
+    .title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.08em;
+      font-size: clamp(26px, 4vw, 42px);
+      text-transform: uppercase;
+    }
+
+    .pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(105, 208, 255, 0.4);
+      color: #bce9ff;
+      background: rgba(105, 208, 255, 0.08);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto 64px;
+      padding: clamp(18px, 4vw, 40px);
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 960px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      box-shadow: var(--glow), 0 20px 60px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-header {
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(120deg, rgba(105, 208, 255, 0.08), rgba(47, 167, 122, 0.08));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-title {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 14px;
+      color: #bce9ff;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      background: radial-gradient(70% 60% at 20% 70%, rgba(47, 167, 122, 0.12), transparent 55%),
+                  radial-gradient(120% 80% at 70% 20%, rgba(105, 208, 255, 0.14), transparent 50%),
+                  #060b12;
+      height: min(70vh, 640px);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .hud {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: #d8e9ff;
+    }
+
+    .badge {
+      background: rgba(12, 20, 34, 0.7);
+      border: 1px solid rgba(105, 208, 255, 0.35);
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .meter {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .controls, .log {
+      padding: 16px;
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #d0def6;
+    }
+
+    .controls strong {
+      color: #fff;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(120deg, rgba(105, 208, 255, 0.18), rgba(124, 107, 255, 0.22));
+      color: #fff;
+      border: 1px solid rgba(105, 208, 255, 0.55);
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: var(--glow);
+    }
+
+    .cta:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--glow), 0 15px 40px rgba(105, 208, 255, 0.25);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 40%, rgba(105, 208, 255, 0.08), rgba(6, 11, 18, 0.92));
+      backdrop-filter: blur(4px);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .overlay h2 {
+      margin: 0 0 8px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #cfe6ff;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <h1>Echo Hunter // Wilderness Run</h1>
+      <span class="pill">LitRPG Survival Prototype</span>
+    </div>
+    <button class="cta" id="startButton">Start / Reset</button>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card">
+        <div class="card-header">
+          <p class="card-title">Manafield Encounter // No cooldowns, just flow</p>
+          <div style="display:flex; gap:8px; align-items:center; color:#bce9ff;">
+            <span id="waveLabel">Wave 0</span>
+            <span style="font-size:10px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.8;">Hold out & evolve</span>
+          </div>
+        </div>
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="gameCanvas" width="900" height="600"></canvas>
+          <div class="hud">
+            <div class="badge">
+              <span style="width:16px; height:16px; background:linear-gradient(145deg, #ff668a, #ffb4c9); border-radius:50%; box-shadow:0 0 12px rgba(255,102,138,0.6);"></span>
+              <div class="meter"><span id="healthMeter" style="width:100%; background:linear-gradient(90deg, #ff668a, #ffa06b);"></span></div>
+              <span id="healthLabel">HP 100</span>
+            </div>
+            <div class="badge">
+              <span style="width:16px; height:16px; background:linear-gradient(145deg, #6cd4ff, #7c6bff); border-radius:50%; box-shadow:0 0 12px rgba(108,212,255,0.6);"></span>
+              <div class="meter"><span id="manaMeter" style="width:100%; background:linear-gradient(90deg, #6cd4ff, #7c6bff);"></span></div>
+              <span id="manaLabel">Mana 100</span>
+            </div>
+            <div class="badge" style="justify-content:space-between;">
+              <span>Score</span>
+              <strong id="scoreLabel">0</strong>
+            </div>
+          </div>
+          <div class="overlay" id="overlay">
+            <div>
+              <h2>Field Calibration</h2>
+              <p>Move with <strong>W/A/S/D</strong>, fire with <strong>click</strong> or <strong>Space</strong>. Survive waves of wild constructs, harvest score, and keep your HP above zero.</p>
+              <div class="chip-row">
+                <span class="chip">No cooldowns</span>
+                <span class="chip">Mana auto-recovers</span>
+                <span class="chip">Enemies track noise</span>
+              </div>
+              <button class="cta" id="overlayButton">Deploy</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <p class="card-title">Run Data</p>
+          <span style="color:#bce9ff; font-size:13px;">Keep your streak alive</span>
+        </div>
+        <div class="controls">
+          <strong>Controls</strong>
+          <span>Move — W / A / S / D</span>
+          <span>Shoot — Left Click or Space</span>
+          <span>Dash — Shift (brief burst, costs mana)</span>
+          <span>Reset — Start / Reset button</span>
+        </div>
+        <div class="log" id="log">Awaiting deployment...</div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const wrap = document.getElementById('canvasWrap');
+    const overlay = document.getElementById('overlay');
+    const overlayButton = document.getElementById('overlayButton');
+    const startButton = document.getElementById('startButton');
+    const logEl = document.getElementById('log');
+    const healthMeter = document.getElementById('healthMeter');
+    const manaMeter = document.getElementById('manaMeter');
+    const healthLabel = document.getElementById('healthLabel');
+    const manaLabel = document.getElementById('manaLabel');
+    const scoreLabel = document.getElementById('scoreLabel');
+    const waveLabel = document.getElementById('waveLabel');
+
+    const state = {
+      running: false,
+      keys: new Set(),
+      player: { x: 0, y: 0, r: 16, speed: 3.4, vx: 0, vy: 0, health: 100, mana: 100, dashCooldown: 0 },
+      projectiles: [],
+      enemies: [],
+      particles: [],
+      score: 0,
+      wave: 0,
+      spawnTimer: 0,
+      lastTime: 0,
+    };
+
+    function resize() {
+      const rect = wrap.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      state.player.x = rect.width / 2;
+      state.player.y = rect.height / 2;
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    const log = (msg) => {
+      const time = new Date().toLocaleTimeString();
+      logEl.innerHTML = `<div>[${time}] ${msg}</div>` + logEl.innerHTML;
+    };
+
+    const spawnEnemy = () => {
+      const rect = wrap.getBoundingClientRect();
+      const side = Math.floor(Math.random() * 4);
+      const margin = 40;
+      let x, y;
+      if (side === 0) { x = Math.random() * rect.width; y = -margin; }
+      else if (side === 1) { x = rect.width + margin; y = Math.random() * rect.height; }
+      else if (side === 2) { x = Math.random() * rect.width; y = rect.height + margin; }
+      else { x = -margin; y = Math.random() * rect.height; }
+      const speed = 1.4 + Math.random() * 0.8 + state.wave * 0.1;
+      state.enemies.push({ x, y, r: 14, speed, hit: 0 });
+    };
+
+    const shoot = (targetX, targetY) => {
+      if (state.player.mana < 6) return;
+      state.player.mana = Math.max(0, state.player.mana - 6);
+      const dx = targetX - state.player.x;
+      const dy = targetY - state.player.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const speed = 8;
+      state.projectiles.push({ x: state.player.x, y: state.player.y, vx: (dx / len) * speed, vy: (dy / len) * speed, life: 60 });
+      state.particles.push({ x: state.player.x, y: state.player.y, life: 12, color: '#6cd4ff' });
+    };
+
+    const dash = () => {
+      if (state.player.dashCooldown > 0 || state.player.mana < 18) return;
+      state.player.mana -= 18;
+      state.player.dashCooldown = 60;
+      const dx = (state.keys.has('d') ? 1 : 0) - (state.keys.has('a') ? 1 : 0);
+      const dy = (state.keys.has('s') ? 1 : 0) - (state.keys.has('w') ? 1 : 0);
+      const len = Math.hypot(dx, dy) || 1;
+      state.player.vx = (dx / len) * 10;
+      state.player.vy = (dy / len) * 10;
+      log('Slipstream dash activated');
+    };
+
+    document.addEventListener('keydown', (e) => {
+      state.keys.add(e.key.toLowerCase());
+      if (e.key === ' ') {
+        const rect = wrap.getBoundingClientRect();
+        shoot(rect.width / 2, 0);
+      }
+      if (e.key === 'Shift') dash();
+    });
+
+    document.addEventListener('keyup', (e) => {
+      state.keys.delete(e.key.toLowerCase());
+    });
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const targetX = (e.clientX - rect.left);
+      const targetY = (e.clientY - rect.top);
+      shoot(targetX, targetY);
+    });
+
+    overlayButton.addEventListener('click', startRun);
+    startButton.addEventListener('click', startRun);
+
+    function startRun() {
+      overlay.style.display = 'none';
+      state.running = true;
+      state.projectiles = [];
+      state.enemies = [];
+      state.particles = [];
+      state.player.health = 100;
+      state.player.mana = 100;
+      state.player.x = wrap.getBoundingClientRect().width / 2;
+      state.player.y = wrap.getBoundingClientRect().height / 2;
+      state.score = 0;
+      state.wave = 1;
+      state.spawnTimer = 60;
+      state.lastTime = performance.now();
+      log('Deployment started. Hostiles inbound.');
+      waveLabel.textContent = `Wave ${state.wave}`;
+      requestAnimationFrame(loop);
+    }
+
+    function update(delta) {
+      const dt = delta / 16.67; // normalize
+      const rect = wrap.getBoundingClientRect();
+      const { player } = state;
+      const moveX = (state.keys.has('d') ? 1 : 0) - (state.keys.has('a') ? 1 : 0);
+      const moveY = (state.keys.has('s') ? 1 : 0) - (state.keys.has('w') ? 1 : 0);
+      const mag = Math.hypot(moveX, moveY) || 1;
+      player.vx += (moveX / mag) * player.speed * 0.6;
+      player.vy += (moveY / mag) * player.speed * 0.6;
+      player.vx *= 0.8;
+      player.vy *= 0.8;
+      player.x = Math.min(Math.max(player.x + player.vx * dt, player.r), rect.width - player.r);
+      player.y = Math.min(Math.max(player.y + player.vy * dt, player.r), rect.height - player.r);
+      player.mana = Math.min(100, player.mana + 0.12 * dt);
+      if (player.dashCooldown > 0) player.dashCooldown -= dt;
+
+      // projectiles
+      state.projectiles.forEach((p) => {
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.life -= dt;
+      });
+      state.projectiles = state.projectiles.filter((p) => p.life > 0 && p.x > -20 && p.y > -20 && p.x < rect.width + 20 && p.y < rect.height + 20);
+
+      // enemies
+      state.enemies.forEach((e) => {
+        const dx = player.x - e.x;
+        const dy = player.y - e.y;
+        const len = Math.hypot(dx, dy) || 1;
+        e.x += (dx / len) * e.speed * dt;
+        e.y += (dy / len) * e.speed * dt;
+        if (Math.hypot(dx, dy) < player.r + e.r && e.hit <= 0) {
+          player.health -= 10;
+          e.hit = 20;
+          log('Armor breached by wild construct');
+        }
+        if (e.hit > 0) e.hit -= dt;
+      });
+
+      // collisions
+      state.projectiles.forEach((p) => {
+        state.enemies.forEach((e) => {
+          if (Math.hypot(p.x - e.x, p.y - e.y) < e.r + 4) {
+            e.hit = 14;
+            e.health = (e.health || 20) - 20;
+            p.life = 0;
+            state.particles.push({ x: e.x, y: e.y, life: 18, color: '#ffa06b' });
+            if (e.health <= 0) {
+              state.score += 10;
+              e.dead = true;
+            }
+          }
+        });
+      });
+      state.enemies = state.enemies.filter((e) => !e.dead);
+
+      // particles
+      state.particles.forEach((p) => p.life -= dt);
+      state.particles = state.particles.filter((p) => p.life > 0);
+
+      // spawning
+      state.spawnTimer -= dt;
+      if (state.spawnTimer <= 0) {
+        spawnEnemy();
+        state.spawnTimer = Math.max(18, 50 - state.wave * 2);
+      }
+      // wave increment by score
+      state.wave = 1 + Math.floor(state.score / 80);
+      waveLabel.textContent = `Wave ${state.wave}`;
+
+      // update HUD
+      healthMeter.style.width = `${Math.max(player.health, 0)}%`;
+      manaMeter.style.width = `${player.mana}%`;
+      healthLabel.textContent = `HP ${Math.max(player.health, 0).toFixed(0)}`;
+      manaLabel.textContent = `Mana ${player.mana.toFixed(0)}`;
+      scoreLabel.textContent = state.score;
+
+      if (player.health <= 0) {
+        state.running = false;
+        overlay.style.display = 'grid';
+        overlay.querySelector('h2').textContent = 'Run terminated';
+        overlay.querySelector('p').textContent = 'System reboot ready — press Deploy to restart.';
+        log('Hunter down. System reset available.');
+      }
+    }
+
+    function draw() {
+      const rect = wrap.getBoundingClientRect();
+      ctx.save();
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+
+      // player
+      ctx.beginPath();
+      ctx.arc(state.player.x, state.player.y, state.player.r, 0, Math.PI * 2);
+      ctx.fillStyle = '#6cd4ff';
+      ctx.shadowColor = '#6cd4ff';
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // projectiles
+      state.projectiles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = '#bff1ff';
+        ctx.fill();
+      });
+
+      // enemies
+      state.enemies.forEach((e) => {
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+        ctx.fillStyle = e.hit > 0 ? '#ff9f6b' : '#2fa77a';
+        ctx.shadowColor = '#2fa77a';
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // particles
+      state.particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(p.life / 20, 0);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      ctx.restore();
+    }
+
+    function loop(now) {
+      if (!state.running) return;
+      const delta = now - state.lastTime;
+      state.lastTime = now;
+      update(delta);
+      draw();
+      requestAnimationFrame(loop);
+    }
+  </script>
+</body>
+</html>
