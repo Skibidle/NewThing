@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Primal Hunter — Mini Web Demo</title>
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<div id="game">
+		<canvas id="canvas"></canvas>
+
+		<div class="system" id="systemUI">
+			<h3>System</h3>
+			<div class="muted">Class: <span id="className">Rookie</span> · Level <span id="level">1</span> · XP <span id="xp">0</span>/<span id="xpNext">100</span></div>
+			<div style="height:8px;margin-top:8px" class="bar"><i id="xpBar" style="width:0%"></i></div>
+			<div class="stats" style="margin-top:8px">
+				<div class="stat">STR: <b id="statStr">3</b></div>
+				<div class="stat">DEX: <b id="statDex">3</b></div>
+				<div class="stat">PER: <b id="statPer">3</b></div>
+				<div class="stat">MANA: <b id="statMana">10</b></div>
+				<div class="stat">VIT: <b id="statVit">10</b></div>
+			</div>
+			<div style="margin-top:8px" class="muted">Inventory: <span id="invCount">0</span> · Crafting hints visible at camp</div>
+			<div style="margin-top:8px">
+				<button class="btn" id="exploreBtn">Explore</button>
+				<button class="btn" id="campBtn" style="background:linear-gradient(180deg,#3cd6a6,#118a6a)">Camp</button>
+			</div>
+		</div>
+
+		<div class="right-ui" id="rightUI">
+			<h4 style="margin:0 0 8px 0;color:var(--accent)">Abilities</h4>
+			<div class="abilities">
+				<div class="ability"> <b>Mana Bolt</b> Click to fire mana projectile<br><span class="muted">Cost: 6 Mana</span></div>
+				<div class="ability"> <b>Shade Step</b> Press <kbd>E</kbd> to dash<br><span class="muted">Cost: 10 Mana</span></div>
+				<div class="ability"> <b>Hunter's Focus</b> Passive — increases Perception</div>
+			</div>
+			<div style="margin-top:12px">
+				<div class="muted">Quick Keys: Click=ManaBolt · E=ShadeStep · L=Open Level Up</div>
+			</div>
+		</div>
+
+		<div class="hud-small" id="hudSmall">HP: <span id="hp">50</span> · MANA: <span id="mana">30</span> · STAM: <span id="stam">100</span></div>
+
+		<div class="modal" id="levelModal">
+			<h2>Level Up</h2>
+			<div class="muted">Choose a stat point to allocate</div>
+			<div style="margin-top:10px;display:flex;gap:8px">
+				<button class="btn" id="addStr">+ STR</button>
+				<button class="btn" id="addDex">+ DEX</button>
+				<button class="btn" id="addPer">+ PER</button>
+				<button class="btn" id="addMana">+ MANA</button>
+				<button class="btn" id="addVit">+ VIT</button>
+			</div>
+			<div style="margin-top:12px"><button class="btn" id="closeLevel">Close</button></div>
+		</div>
+
+		<div class="modal" id="lootModal">
+			<h2>Loot</h2>
+			<div class="loot-list" id="lootList"></div>
+			<div style="margin-top:12px"><button class="btn" id="takeLoot">Take All</button></div>
+		</div>
+
+		<footer>Primal Hunter — demo. No timers or countdowns present in UI.</footer>
+	</div>
+
+	<script src="game.js"></script>
+</body>
+</html>
