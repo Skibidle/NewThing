@@ -135,3 +135,11 @@ const AUDIO_CONFIG = {
     death: 'death.mp3'
   }
 };
+
+// Regeneration settings (per second)
+const REGEN = {
+  hpBase: 0.5,        // flat HP per second
+  hpPerVit: 0.6,      // additional HP per second per VIT
+  manaBase: 0.6,      // flat Mana per second
+  manaPerStat: 0.8    // additional Mana per second per Mana stat
+};

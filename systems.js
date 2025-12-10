@@ -45,6 +45,9 @@ class PlayerSystem {
       isSprinting: false,
       staminaDrain: 0.4
     };
+    // status effects and cooldowns
+    this.player.statusEffects = [];
+    this.player.cooldowns = {};
   }
 
   getPlayer() {
@@ -142,7 +145,14 @@ class PlayerSystem {
   }
 
   takeDamage(amount) {
-    this.player.hp = Math.max(0, this.player.hp - amount);
+    // Apply damage reduction from active status effects
+    let reduction = 0;
+    for (const s of this.player.statusEffects) {
+      if (s.type === 'damageReduction' && s.reduction) reduction += s.reduction;
+    }
+    reduction = Math.min(0.9, reduction);
+    const effective = Math.max(0, amount * (1 - reduction));
+    this.player.hp = Math.max(0, this.player.hp - effective);
     return this.player.hp <= 0;
   }
 
@@ -181,6 +191,28 @@ class PlayerSystem {
       inventory: [],
       freeStatPoints: 0
     });
+  }
+
+  // Update per-frame processing (dt in seconds)
+  update(dt) {
+    if (!dt) return;
+    // Update cooldowns
+    for (const key in this.player.cooldowns) {
+      if (this.player.cooldowns[key] > 0) this.player.cooldowns[key] = Math.max(0, this.player.cooldowns[key] - dt);
+    }
+
+    // Update status effects
+    for (let i = this.player.statusEffects.length - 1; i >= 0; i--) {
+      const s = this.player.statusEffects[i];
+      s.duration -= dt;
+      if (s.duration <= 0) this.player.statusEffects.splice(i, 1);
+    }
+
+    // Regeneration (per second values coming from constants)
+    const hpRegenPerSec = (REGEN.hpBase || 0) + (REGEN.hpPerVit || 0) * (this.player.vit || 0);
+    const manaRegenPerSec = (REGEN.manaBase || 0) + (REGEN.manaPerStat || 0) * (this.player.manaStat || 0);
+    this.player.hp = Math.min(this.player.maxHp, this.player.hp + hpRegenPerSec * dt);
+    this.player.mana = Math.min(this.player.maxMana, this.player.mana + manaRegenPerSec * dt);
   }
 }
 
@@ -376,11 +408,20 @@ class ProjectileSystem {
           const dist = distance(p.x, p.y, en.x, en.y);
           
           if (dist < en.r + 4) {
-            hits.push({
-              projectile: i,
-              enemy: j,
-              damage: p.damage
-            });
+            // If this projectile is a fireball, also apply AOE
+            if (p.type === 'fireball') {
+              const aoe = p.aoe || 48;
+              // hit all enemies within aoe
+              for (let k = enemies.length - 1; k >= 0; k--) {
+                const en2 = enemies[k];
+                const d2 = distance(p.x, p.y, en2.x, en2.y);
+                if (d2 < aoe + en2.r) {
+                  hits.push({ projectile: i, enemy: k, damage: p.damage });
+                }
+              }
+            } else {
+              hits.push({ projectile: i, enemy: j, damage: p.damage });
+            }
             p.ttl = 0;
             break;
           }
@@ -414,8 +455,12 @@ class ProjectileSystem {
 
 // ===== ABILITY SYSTEM =====
 class AbilitySystem {
-  constructor(player) {
-    this.player = player;
+  constructor(playerSystem, projectileSystem, enemySystem, particleSystem) {
+    this.playerSystem = playerSystem;
+    this.player = playerSystem.player;
+    this.projectileSystem = projectileSystem;
+    this.enemySystem = enemySystem;
+    this.particleSystem = particleSystem;
   }
 
   executeAbility(abilityIndex, targetX, targetY, projectileSystem) {
@@ -426,29 +471,130 @@ class AbilitySystem {
     const ability = this.player.abilities[abilityIndex];
     
     // Check mana cost
-    if (this.player.mana < ability.cost) {
-      return false;
-    }
-    
-    // Execute ability
+    // Check cooldown
+    const cname = ability.name.toLowerCase();
+    if (this.player.cooldowns[cname] && this.player.cooldowns[cname] > 0) return false;
+    // Check mana
+    if (this.player.mana < ability.cost) return false;
+    // Execute ability and deduct mana
     this.player.mana -= ability.cost;
+    // set a default cooldown (seconds)
+    this.player.cooldowns[cname] = ability.cooldown || 0.8;
     
     const dx = targetX - this.player.x;
     const dy = targetY - this.player.y;
     const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    const speed = 4 + Math.random() * 2;
-    
-    // Generic projectile ability
-    projectileSystem.spawn(
-      this.player.x,
-      this.player.y,
-      (dx / dist) * speed,
-      (dy / dist) * speed,
-      6 + this.player.str * 0.5 + this.player.per * 1.5,
-      'player',
-      ability.name.toLowerCase()
-    );
-    
+
+    const baseDamage = 6 + this.player.str * 0.5 + this.player.per * 1.5;
+
+    switch (cname) {
+      case 'cleave': {
+        const radius = ability.radius || 60;
+        const enemies = this.enemySystem.getEnemies();
+        for (const en of enemies) {
+          if (distance(this.player.x, this.player.y, en.x, en.y) < radius + en.r) {
+            en.hp -= baseDamage * (ability.damage || 1.2);
+          }
+        }
+        // small particles
+        this.particleSystem.spawn(this.player.x, this.player.y, 0, 0, 20, '#ffcc88', 6);
+        break;
+      }
+      case 'fortify': {
+        // apply damage reduction buff
+        const dur = ability.duration || 5;
+        const reduction = ability.reduction || 0.3;
+        this.player.statusEffects.push({ type: 'damageReduction', reduction, duration: dur });
+        break;
+      }
+      case 'backstab': {
+        // high-damage melee against a nearby enemy
+        const range = ability.range || 48;
+        const enemies = this.enemySystem.getEnemies();
+        for (const en of enemies) {
+          if (distance(this.player.x, this.player.y, en.x, en.y) < range + en.r) {
+            // chance for critical
+            const crit = Math.random() < (ability.critChance || 0.25);
+            en.hp -= baseDamage * (ability.damage || 1.6) * (crit ? 1.8 : 1);
+            if (crit) this.particleSystem.spawn(en.x, en.y, 0, 0, 12, '#ffd700', 5);
+            break;
+          }
+        }
+        break;
+      }
+      case 'shadow step': {
+        const range = ability.range || 120;
+        const step = Math.min(range, dist);
+        const nx = this.player.x + (dx / dist) * step;
+        const ny = this.player.y + (dy / dist) * step;
+        this.player.x = clamp(nx, 20, GAME_CONFIG.world.w - 20);
+        this.player.y = clamp(ny, 20, GAME_CONFIG.world.h - 20);
+        this.particleSystem.spawn(this.player.x, this.player.y, 0, 0, 20, '#8888ff', 6);
+        break;
+      }
+      case 'mana bolt': {
+        const speed = 6 + Math.random() * 2;
+        this.projectileSystem.spawn(
+          this.player.x, this.player.y,
+          (dx / dist) * speed, (dy / dist) * speed,
+          baseDamage * (ability.damage || 0.85),
+          'player', 'mana_bolt'
+        );
+        break;
+      }
+      case 'fireball': {
+        const speed = 4 + Math.random() * 2;
+        // fireball projectile with aoe
+        this.projectileSystem.spawn(
+          this.player.x, this.player.y,
+          (dx / dist) * speed, (dy / dist) * speed,
+          baseDamage * (ability.damage || 1.6), 'player', 'fireball'
+        );
+        break;
+      }
+      case 'arrow shot': {
+        const speed = 7 + Math.random() * 2;
+        // apply a small accuracy deviation
+        const acc = ability.accuracy || 0.95;
+        const angle = Math.atan2(dy, dx) + (1 - acc) * (Math.random() - 0.5) * 0.6;
+        this.projectileSystem.spawn(this.player.x, this.player.y, Math.cos(angle) * speed, Math.sin(angle) * speed, baseDamage * (ability.damage || 1.0), 'player', 'arrow');
+        break;
+      }
+      case 'dash': {
+        const dashDist = ability.range || 150;
+        const step = Math.min(dashDist, dist);
+        this.player.x = clamp(this.player.x + (dx / dist) * step, 20, GAME_CONFIG.world.w - 20);
+        this.player.y = clamp(this.player.y + (dy / dist) * step, 20, GAME_CONFIG.world.h - 20);
+        // stamina cost
+        this.player.stam = Math.max(0, this.player.stam - (ability.costStam || 20));
+        break;
+      }
+      case 'holy strike': {
+        const range = ability.range || 48;
+        const enemies = this.enemySystem.getEnemies();
+        for (const en of enemies) {
+          if (distance(this.player.x, this.player.y, en.x, en.y) < range + en.r) {
+            en.hp -= baseDamage * (ability.damage || 1.2);
+            // heal player
+            this.player.hp = Math.min(this.player.maxHp, this.player.hp + (ability.healing || 0.3) * baseDamage);
+            break;
+          }
+        }
+        break;
+      }
+      case 'light shield': {
+        const dur = ability.duration || 4;
+        const reduction = ability.reduction || 0.5;
+        this.player.statusEffects.push({ type: 'damageReduction', reduction, duration: dur });
+        break;
+      }
+      default: {
+        // Generic projectile fallback
+        const speed = 4 + Math.random() * 2;
+        this.projectileSystem.spawn(this.player.x, this.player.y, (dx / dist) * speed, (dy / dist) * speed, baseDamage, 'player', ability.name.toLowerCase());
+      }
+    }
+
     return true;
   }
 

@@ -14,7 +14,7 @@ resize();
 const playerSystem = new PlayerSystem();
 const enemySystem = new EnemySystem(GAME_CONFIG.world);
 const projectileSystem = new ProjectileSystem();
-const abilitySystem = new AbilitySystem(playerSystem.player);
+const abilitySystem = new AbilitySystem(playerSystem, projectileSystem, enemySystem, particleSystem);
 const lootSystem = new LootSystem();
 const camera = new CameraSystem();
 const particleSystem = new ParticleSystem();
@@ -214,6 +214,10 @@ function update() {
   
   // Update projectiles
   projectileSystem.update();
+
+  // Update player system (regen, cooldowns)
+  // approximate dt by frame time: use small fixed dt ~1/60
+  playerSystem.update(1 / 60);
   
   // Check projectile collisions
   const hits = projectileSystem.checkCollision(enemySystem.getEnemies(), player);
@@ -238,6 +242,7 @@ function update() {
   
   // Update enemy AI
   enemySystem.updateAI(player, camera);
+  // allow ability system to interact if needed in the future
   
   // Update camera
   camera.update(player, GAME_CONFIG.world.w, GAME_CONFIG.world.h, canvas.width, canvas.height);
