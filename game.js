@@ -522,6 +522,7 @@ function updateStatScreenUI(){
   
   // Derived stats
   document.getElementById('screenHp').textContent = `${Math.round(player.hp)} / ${player.maxHp}`;
+  document.getElementById('screenStam').textContent = `${Math.round(player.stam)} / ${player.maxStam}`;
   document.getElementById('screenManaPool').textContent = `${Math.round(player.mana)} / ${player.maxMana}`;
   document.getElementById('screenSpeed').textContent = player.speed.toFixed(2);
   document.getElementById('screenCritChance').textContent = '0%'; // placeholder
@@ -529,6 +530,7 @@ function updateStatScreenUI(){
   // Progression
   document.getElementById('screenLevel').textContent = player.level;
   document.getElementById('screenXp').textContent = `${player.xp} / ${player.xpNext}`;
+  document.getElementById('screenClass').textContent = player.class || 'None';
   document.getElementById('screenFreePoints').textContent = player.freeStatPoints;
   
   // Update abilities tab
@@ -544,6 +546,36 @@ function updateStatScreenUI(){
   } else {
     abilitiesList.innerHTML = '<div class="muted">No abilities yet. Choose a class to get started.</div>';
   }
+}
+
+function allocateStatPoint(stat){
+  if(player.freeStatPoints <= 0) return;
+  
+  player.freeStatPoints--;
+  
+  if(stat === 'str'){
+    player.str++;
+    player.maxHp += 10;
+    player.hp += 10;
+  } else if(stat === 'dex'){
+    player.dex++;
+    player.speed += 0.15;
+  } else if(stat === 'per'){
+    player.per++;
+  } else if(stat === 'mana'){
+    player.manaStat++;
+    player.maxMana += 6;
+    player.mana += 6;
+  } else if(stat === 'vit'){
+    player.vit++;
+    player.maxHp += 10;
+    player.maxStam += 10;
+    player.hp += 10;
+    player.stam += 10;
+  }
+  
+  updateStatScreenUI();
+  updateUI();
 }
 
 function switchStatTab(tabName){
