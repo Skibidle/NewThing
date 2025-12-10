@@ -78,7 +78,6 @@ const invCount = document.getElementById('invCount');
 
 // Modals
 const classModal = document.getElementById('classModal');
-const levelModal = document.getElementById('levelModal');
 const lootModal = document.getElementById('lootModal');
 const lootList = document.getElementById('lootList');
 
@@ -347,16 +346,14 @@ function gainXP(amount){
     }
     // After automatic allocation, award 1 free stat point for the player to spend manually
     player.freeStatPoints = (player.freeStatPoints || 0) + 1;
-    // show a simple level-up notification (no forced allocation)
-    levelModal.style.display = 'block';
+    // no blocking prompt shown on level-up anymore
   }
 }
 
 function showLevelModal(){
   if(!player.classKey){ showClassModal(); return; }
-  levelModal.style.display = 'block';
+  // intentionally no modal shown for level-ups
 }
-function hideLevelModal(){ levelModal.style.display = 'none'; }
 
 function showClassModal(){
   classModal.style.display = 'block';
