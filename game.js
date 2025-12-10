@@ -34,9 +34,9 @@ const CLASSES = {
     description: '+3 MANA, +1 PER per level',
     bonuses: { str: 0, dex: 0, per: 1, manaStat: 3, vit: 0 },
     freeStatPoints: 4,
+    // Mage only has Mana Bolt as requested
     abilities: [
-      { name: 'Arcane Bolt', key: 'click', cost: '6 Mana', desc: 'Ranged magical projectile' },
-      { name: 'Fireball', key: 'E', cost: '18 Mana', desc: 'Area explosion spell' }
+      { name: 'Mana Bolt', key: 'click', cost: '6 Mana', desc: 'Ranged magical projectile' }
     ]
   },
   ranger: {
@@ -90,7 +90,7 @@ const player = {
   stam:100, maxStam:100,
   str:10, dex:10, per:10, manaStat:10, vit:10,
   level:1, xp:0, xpNext:100, class:null, classKey:null, inv:[],
-  speed:2, abilities:[], freeStatPoints:0,
+  speed:2, abilities:[], freeStatPoints:0, pendingStatPoints:0,
 };
 
 function updateUI(){
@@ -109,14 +109,19 @@ function updateUI(){
   invCount.textContent = player.inv.length;
   document.getElementById('stam').textContent = Math.round(player.stam);
   document.getElementById('freePoints').textContent = player.freeStatPoints;
-  
-  // Update button colors based on free points
+  document.getElementById('pendingPoints').textContent = player.pendingStatPoints || 0;
+
+  // Update button colors and enabled state based on free/pending points
   const statButtons = document.querySelectorAll('.btn-stat');
   statButtons.forEach(btn => {
-    if(player.freeStatPoints > 0) {
-      btn.classList.add('has-points');
-    } else {
+    // When there are pending points that must be distributed immediately, disable free allocation until done
+    if(player.pendingStatPoints && player.pendingStatPoints > 0) {
+      btn.disabled = true;
       btn.classList.remove('has-points');
+    } else {
+      btn.disabled = false;
+      if(player.freeStatPoints > 0) btn.classList.add('has-points');
+      else btn.classList.remove('has-points');
     }
   });
 }
@@ -340,15 +345,18 @@ function gainXP(amount){
       player.freeStatPoints += CLASSES[player.classKey].freeStatPoints;
       applyClassBonus();
     }
-    // Show level up notification
+    // Give one normal pending stat point that must be allocated now
+    player.pendingStatPoints = (player.pendingStatPoints || 0) + 1;
+    // Show level-up modal and require distribution of pending points
     levelModal.style.display = 'block';
-    setTimeout(() => { levelModal.style.display = 'none'; }, 3000);
   }
 }
 
 function showLevelModal(){
   if(!player.classKey){ showClassModal(); return; }
-  // Just show a brief notification, buttons are on main UI
+  // If there are pending stat points they must be allocated here
+  levelModal.style.display = 'block';
+  document.getElementById('pendingPoints').textContent = player.pendingStatPoints || 0;
 }
 function hideLevelModal(){ levelModal.style.display = 'none'; }
 
@@ -405,6 +413,27 @@ document.getElementById('addDex').addEventListener('click', ()=>{ if(player.free
 document.getElementById('addPer').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.per++; updateUI(); } });
 document.getElementById('addMana').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.manaStat += 1; player.maxMana += 6; player.mana += 6; updateUI(); } });
 document.getElementById('addVit').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.vit++; player.maxHp += 6; player.hp += 6; updateUI(); } });
+
+// Modal allocation (pending) - must be distributed at level up
+function allocatePending(stat){
+  if(!player.pendingStatPoints || player.pendingStatPoints <= 0) return;
+  player.pendingStatPoints--;
+  if(stat === 'str'){ player.str++; player.maxHp += 4; player.hp += 4; }
+  else if(stat === 'dex'){ player.dex++; player.speed += 0.15; }
+  else if(stat === 'per'){ player.per++; }
+  else if(stat === 'mana'){ player.manaStat += 1; player.maxMana += 6; player.mana += 6; }
+  else if(stat === 'vit'){ player.vit++; player.maxHp += 6; player.hp += 6; }
+  // update pending display and UI
+  document.getElementById('pendingPoints').textContent = player.pendingStatPoints;
+  updateUI();
+  if(player.pendingStatPoints <= 0){ levelModal.style.display = 'none'; }
+}
+
+document.getElementById('lvlAddStr').addEventListener('click', ()=> allocatePending('str'));
+document.getElementById('lvlAddDex').addEventListener('click', ()=> allocatePending('dex'));
+document.getElementById('lvlAddPer').addEventListener('click', ()=> allocatePending('per'));
+document.getElementById('lvlAddMana').addEventListener('click', ()=> allocatePending('mana'));
+document.getElementById('lvlAddVit').addEventListener('click', ()=> allocatePending('vit'));
 
 // Loot modal
 document.getElementById('takeLoot').addEventListener('click', ()=>{ player.inv = []; lootModal.style.display='none'; updateUI(); });
