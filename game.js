@@ -13,6 +13,7 @@ const CLASSES = {
     name: 'Warrior',
     description: '+2 STR, +1 VIT per level',
     bonuses: { str: 2, dex: 0, per: 0, manaStat: 0, vit: 1 },
+    freeStatPoints: 3,
     abilities: [
       { name: 'Cleave', key: 'click', cost: '8 Mana', desc: 'Slash with great force' },
       { name: 'Fortify', key: 'E', cost: '12 Mana', desc: 'Temporary damage reduction' }
@@ -22,6 +23,7 @@ const CLASSES = {
     name: 'Rogue',
     description: '+2 DEX, +1 PER per level',
     bonuses: { str: 0, dex: 2, per: 1, manaStat: 0, vit: 0 },
+    freeStatPoints: 4,
     abilities: [
       { name: 'Backstab', key: 'click', cost: '5 Mana', desc: 'Quick deadly strike' },
       { name: 'Shadow Step', key: 'E', cost: '8 Mana', desc: 'Teleport a short distance' }
@@ -31,6 +33,7 @@ const CLASSES = {
     name: 'Mage',
     description: '+3 MANA, +1 PER per level',
     bonuses: { str: 0, dex: 0, per: 1, manaStat: 3, vit: 0 },
+    freeStatPoints: 4,
     abilities: [
       { name: 'Arcane Bolt', key: 'click', cost: '6 Mana', desc: 'Ranged magical projectile' },
       { name: 'Fireball', key: 'E', cost: '18 Mana', desc: 'Area explosion spell' }
@@ -40,6 +43,7 @@ const CLASSES = {
     name: 'Ranger',
     description: '+1 STR, +1 DEX, +1 PER per level',
     bonuses: { str: 1, dex: 1, per: 1, manaStat: 0, vit: 0 },
+    freeStatPoints: 3,
     abilities: [
       { name: 'Arrow Shot', key: 'click', cost: '4 Mana', desc: 'Precise ranged attack' },
       { name: 'Dash', key: 'E', cost: '10 Mana', desc: 'Quick movement' }
@@ -49,6 +53,7 @@ const CLASSES = {
     name: 'Paladin',
     description: '+1 STR, +2 VIT, +1 MANA per level',
     bonuses: { str: 1, dex: 0, per: 0, manaStat: 1, vit: 2 },
+    freeStatPoints: 4,
     abilities: [
       { name: 'Holy Strike', key: 'click', cost: '8 Mana', desc: 'Blessed melee attack' },
       { name: 'Light Shield', key: 'E', cost: '10 Mana', desc: 'Defensive barrier' }
@@ -85,7 +90,7 @@ const player = {
   stam:100, maxStam:100,
   str:10, dex:10, per:10, manaStat:10, vit:10,
   level:1, xp:0, xpNext:100, class:null, classKey:null, inv:[],
-  speed:2, abilities:[],
+  speed:2, abilities:[], freeStatPoints:0,
 };
 
 function updateUI(){
@@ -103,6 +108,17 @@ function updateUI(){
   statVit.textContent = player.vit;
   invCount.textContent = player.inv.length;
   document.getElementById('stam').textContent = Math.round(player.stam);
+  document.getElementById('freePoints').textContent = player.freeStatPoints;
+  
+  // Update button colors based on free points
+  const statButtons = document.querySelectorAll('.btn-stat');
+  statButtons.forEach(btn => {
+    if(player.freeStatPoints > 0) {
+      btn.classList.add('has-points');
+    } else {
+      btn.classList.remove('has-points');
+    }
+  });
 }
 
 // Projectiles
@@ -315,18 +331,24 @@ function update(){
 
 function gainXP(amount){
   player.xp += amount;
-  while(player.xp >= player.xpNext){ player.xp -= player.xpNext; player.level += 1; player.xpNext = Math.round(player.xpNext * 1.6); showLevelModal(); }
+  while(player.xp >= player.xpNext){ 
+    player.xp -= player.xpNext; 
+    player.level += 1; 
+    player.xpNext = Math.round(player.xpNext * 1.6);
+    // Give free stat points from class
+    if(player.classKey) {
+      player.freeStatPoints += CLASSES[player.classKey].freeStatPoints;
+      applyClassBonus();
+    }
+    // Show level up notification
+    levelModal.style.display = 'block';
+    setTimeout(() => { levelModal.style.display = 'none'; }, 3000);
+  }
 }
 
 function showLevelModal(){
   if(!player.classKey){ showClassModal(); return; }
-  levelModal.style.display = 'block';
-  // Update stats display in level modal
-  document.getElementById('levelStatStr').textContent = player.str;
-  document.getElementById('levelStatDex').textContent = player.dex;
-  document.getElementById('levelStatPer').textContent = player.per;
-  document.getElementById('levelStatMana').textContent = player.manaStat;
-  document.getElementById('levelStatVit').textContent = player.vit;
+  // Just show a brief notification, buttons are on main UI
 }
 function hideLevelModal(){ levelModal.style.display = 'none'; }
 
@@ -342,6 +364,7 @@ function selectClass(classKey){
   player.classKey = classKey;
   player.class = CLASSES[classKey].name;
   player.abilities = CLASSES[classKey].abilities;
+  player.freeStatPoints = CLASSES[classKey].freeStatPoints;
   hideClassModal();
   updateAbilitiesUI();
   updateUI();
@@ -377,11 +400,11 @@ function applyClassBonus(){
   player.speed += bonus.dex * 0.15;
 }
 
-document.getElementById('addStr').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
-document.getElementById('addDex').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
-document.getElementById('addPer').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
-document.getElementById('addMana').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
-document.getElementById('addVit').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
+document.getElementById('addStr').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
+document.getElementById('addDex').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
+document.getElementById('addPer').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
+document.getElementById('addMana').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
+document.getElementById('addVit').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
 
 // Loot modal
 document.getElementById('takeLoot').addEventListener('click', ()=>{ player.inv = []; lootModal.style.display='none'; updateUI(); });

@@ -14,12 +14,13 @@
 			<h3>System</h3>
 			<div class="muted">Class: <span id="className">Rookie</span> · Level <span id="level">1</span> · XP <span id="xp">0</span>/<span id="xpNext">100</span></div>
 			<div style="height:8px;margin-top:8px" class="bar"><i id="xpBar" style="width:0%"></i></div>
-			<div class="stats" style="margin-top:8px">
-				<div class="stat">STR: <b id="statStr">3</b></div>
-				<div class="stat">DEX: <b id="statDex">3</b></div>
-				<div class="stat">PER: <b id="statPer">3</b></div>
-				<div class="stat">MANA: <b id="statMana">10</b></div>
-				<div class="stat">VIT: <b id="statVit">10</b></div>
+			<div class="muted" style="margin-top:6px;font-size:12px">Free Points: <b id="freePoints" style="color:var(--accent)">0</b></div>
+			<div class="stats-vertical" style="margin-top:10px">
+				<div class="stat-row"><span>STR: <b id="statStr">10</b></span> <button class="btn-stat" id="addStr" title="Add stat point">+</button></div>
+				<div class="stat-row"><span>DEX: <b id="statDex">10</b></span> <button class="btn-stat" id="addDex" title="Add stat point">+</button></div>
+				<div class="stat-row"><span>PER: <b id="statPer">10</b></span> <button class="btn-stat" id="addPer" title="Add stat point">+</button></div>
+				<div class="stat-row"><span>MANA: <b id="statMana">10</b></span> <button class="btn-stat" id="addMana" title="Add stat point">+</button></div>
+				<div class="stat-row"><span>VIT: <b id="statVit">10</b></span> <button class="btn-stat" id="addVit" title="Add stat point">+</button></div>
 			</div>
 			<div style="margin-top:8px" class="muted">Inventory: <span id="invCount">0</span> · Crafting hints visible at camp</div>
 			<div style="margin-top:8px">
@@ -51,15 +52,8 @@
 		</div>
 
 		<div class="modal" id="levelModal">
-			<h2>Level Up</h2>
-			<div class="muted">Allocate your stat point</div>
-			<div style="margin-top:12px">
-				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>STR: <b id="levelStatStr">10</b></span> <button class="btn" id="addStr" style="padding:4px 12px;font-size:0.9em">+</button></div>
-				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>DEX: <b id="levelStatDex">10</b></span> <button class="btn" id="addDex" style="padding:4px 12px;font-size:0.9em">+</button></div>
-				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>PER: <b id="levelStatPer">10</b></span> <button class="btn" id="addPer" style="padding:4px 12px;font-size:0.9em">+</button></div>
-				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>MANA: <b id="levelStatMana">10</b></span> <button class="btn" id="addMana" style="padding:4px 12px;font-size:0.9em">+</button></div>
-				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>VIT: <b id="levelStatVit">10</b></span> <button class="btn" id="addVit" style="padding:4px 12px;font-size:0.9em">+</button></div>
-			</div>
+			<h2>Level Up!</h2>
+			<div class="muted">You've gained a new stat point. Use the + buttons next to your stats to allocate it.</div>
 		</div>
 
 		<div class="modal" id="lootModal">
