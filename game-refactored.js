@@ -129,7 +129,7 @@ function allocateStatPoint(stat) {
   updateUI();
 }
 
-function switchStatTab(tabName) {
+function switchStatTab(tabName, buttonEl) {
   document.getElementById('statsTab').classList.remove('active');
   document.getElementById('abilitiesTab').classList.remove('active');
   document.getElementById('equipmentTab').classList.remove('active');
@@ -140,7 +140,8 @@ function switchStatTab(tabName) {
   if (document.getElementById(tabId)) {
     document.getElementById(tabId).classList.add('active');
   }
-  event.target.classList.add('active');
+  // Activate the provided button element if available
+  if (buttonEl && buttonEl.classList) buttonEl.classList.add('active');
 }
 
 function openLoot() {
