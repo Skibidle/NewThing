@@ -400,11 +400,11 @@ function applyClassBonus(){
   player.speed += bonus.dex * 0.15;
 }
 
-document.getElementById('addStr').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
-document.getElementById('addDex').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
-document.getElementById('addPer').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
-document.getElementById('addMana').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
-document.getElementById('addVit').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; applyClassBonus(); updateUI(); } });
+document.getElementById('addStr').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.str++; player.maxHp += 4; player.hp += 4; updateUI(); } });
+document.getElementById('addDex').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.dex++; player.speed += 0.15; updateUI(); } });
+document.getElementById('addPer').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.per++; updateUI(); } });
+document.getElementById('addMana').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.manaStat += 1; player.maxMana += 6; player.mana += 6; updateUI(); } });
+document.getElementById('addVit').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.vit++; player.maxHp += 6; player.hp += 6; updateUI(); } });
 
 // Loot modal
 document.getElementById('takeLoot').addEventListener('click', ()=>{ player.inv = []; lootModal.style.display='none'; updateUI(); });
