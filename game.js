@@ -7,32 +7,52 @@ addEventListener('resize', resize); resize();
 // world bounds
 const WORLD = { w: 3000, h: 2000 };
 
-// Class definitions with stat bonuses per level
+// Class definitions with stat bonuses per level and abilities
 const CLASSES = {
   warrior: {
     name: 'Warrior',
     description: '+2 STR, +1 VIT per level',
-    bonuses: { str: 2, dex: 0, per: 0, manaStat: 0, vit: 1 }
+    bonuses: { str: 2, dex: 0, per: 0, manaStat: 0, vit: 1 },
+    abilities: [
+      { name: 'Cleave', key: 'click', cost: '8 Mana', desc: 'Slash with great force' },
+      { name: 'Fortify', key: 'E', cost: '12 Mana', desc: 'Temporary damage reduction' }
+    ]
   },
   rogue: {
     name: 'Rogue',
     description: '+2 DEX, +1 PER per level',
-    bonuses: { str: 0, dex: 2, per: 1, manaStat: 0, vit: 0 }
+    bonuses: { str: 0, dex: 2, per: 1, manaStat: 0, vit: 0 },
+    abilities: [
+      { name: 'Backstab', key: 'click', cost: '5 Mana', desc: 'Quick deadly strike' },
+      { name: 'Shadow Step', key: 'E', cost: '8 Mana', desc: 'Teleport a short distance' }
+    ]
   },
   mage: {
     name: 'Mage',
     description: '+3 MANA, +1 PER per level',
-    bonuses: { str: 0, dex: 0, per: 1, manaStat: 3, vit: 0 }
+    bonuses: { str: 0, dex: 0, per: 1, manaStat: 3, vit: 0 },
+    abilities: [
+      { name: 'Arcane Bolt', key: 'click', cost: '6 Mana', desc: 'Ranged magical projectile' },
+      { name: 'Fireball', key: 'E', cost: '18 Mana', desc: 'Area explosion spell' }
+    ]
   },
   ranger: {
     name: 'Ranger',
     description: '+1 STR, +1 DEX, +1 PER per level',
-    bonuses: { str: 1, dex: 1, per: 1, manaStat: 0, vit: 0 }
+    bonuses: { str: 1, dex: 1, per: 1, manaStat: 0, vit: 0 },
+    abilities: [
+      { name: 'Arrow Shot', key: 'click', cost: '4 Mana', desc: 'Precise ranged attack' },
+      { name: 'Dash', key: 'E', cost: '10 Mana', desc: 'Quick movement' }
+    ]
   },
   paladin: {
     name: 'Paladin',
     description: '+1 STR, +2 VIT, +1 MANA per level',
-    bonuses: { str: 1, dex: 0, per: 0, manaStat: 1, vit: 2 }
+    bonuses: { str: 1, dex: 0, per: 0, manaStat: 1, vit: 2 },
+    abilities: [
+      { name: 'Holy Strike', key: 'click', cost: '8 Mana', desc: 'Blessed melee attack' },
+      { name: 'Light Shield', key: 'E', cost: '10 Mana', desc: 'Defensive barrier' }
+    ]
   }
 };
 
@@ -65,7 +85,7 @@ const player = {
   stam:100, maxStam:100,
   str:10, dex:10, per:10, manaStat:10, vit:10,
   level:1, xp:0, xpNext:100, class:null, classKey:null, inv:[],
-  speed:2,
+  speed:2, abilities:[],
 };
 
 function updateUI(){
@@ -112,6 +132,20 @@ function spawnEnemy(type, x=null,y=null){
   const isRanged = Math.random() < 0.28;
   const e = {x:ex,y:ey,r:18,hp:t.hp,baseHp:t.hp,spd:t.spd,damage:t.damage,color:t.color,name:t.name,xp:t.xp};
   e.type = isRanged ? 'ranged' : 'melee';
+  
+  // Scale enemy stats based on distance from world center (starting point)
+  const startX = WORLD.w/2, startY = WORLD.h/2;
+  const distFromStart = Math.sqrt((ex - startX)*(ex - startX) + (ey - startY)*(ey - startY));
+  const maxDistFromStart = Math.sqrt(startX*startX + startY*startY); // diagonal to corner
+  const distanceRatio = Math.min(1, distFromStart / maxDistFromStart); // 0 to 1
+  const levelMultiplier = 0.5 + (distanceRatio * 1.5); // scale from 0.5x to 2x at edges
+  
+  e.hp = Math.round(e.hp * levelMultiplier);
+  e.baseHp = e.hp;
+  e.spd = e.spd * (0.9 + distanceRatio * 0.3); // slight speed increase at edges
+  e.damage = Math.round(e.damage * levelMultiplier);
+  e.xp = Math.round(e.xp * levelMultiplier);
+  
   enemies.push(e);
 }
 
@@ -133,21 +167,26 @@ document.getElementById('campBtn').addEventListener('click',()=>{
 let mouse = {x:0,y:0,down:false, worldX:0, worldY:0};
 const keys = {};
 canvas.addEventListener('mousemove',e=>{ mouse.x = e.clientX; mouse.y = e.clientY; });
-canvas.addEventListener('mousedown',e=>{ mouse.down=true; fireManaBolt(); });
+canvas.addEventListener('mousedown',e=>{ mouse.down=true; if(player.abilities && player.abilities[0]) fireAbility(0); });
 canvas.addEventListener('mouseup',e=>{ mouse.down=false });
 addEventListener('keydown', (e)=>{ keys[e.key.toLowerCase()] = true; });
 addEventListener('keyup', (e)=>{ keys[e.key.toLowerCase()] = false; });
 
-// Abilities
-function fireManaBolt(){
-  if(player.mana < 6) return; // need mana
-  player.mana -= 6;
+// Abilities - generic system for all classes
+function fireAbility(index){
+  if(!player.abilities || !player.abilities[index]) return;
+  if(!player.classKey) return;
+  // Parse cost from ability description
+  const abilityName = player.abilities[index].name;
+  const baseDamage = 6 + Math.floor(player.str * 0.5) + Math.floor(player.per * 1.5);
   const ang = Math.atan2(mouse.worldY - player.y, mouse.worldX - player.x);
   const speed = 8 + player.per*0.5;
-  spawnProjectile(player.x, player.y, Math.cos(ang)*speed, Math.sin(ang)*speed, 6 + Math.floor(player.per*1.5), 'player');
+  spawnProjectile(player.x, player.y, Math.cos(ang)*speed, Math.sin(ang)*speed, baseDamage, 'player');
+  player.mana -= 6; // generic mana cost
 }
 
-function shadeStep(){
+function secondAbility(){
+  if(!player.abilities || !player.abilities[1]) return;
   if(player.mana < 10 || player.stam < 20) return;
   player.mana -= 10;
   player.stam = Math.max(0, player.stam - 20);
@@ -159,7 +198,7 @@ function shadeStep(){
 }
 
 addEventListener('keydown', (e)=>{
-  if(e.key==='e' || e.key==='E') shadeStep();
+  if(e.key==='e' || e.key==='E') secondAbility();
   if(e.key==='l' || e.key==='L') showLevelModal();
 });
 
@@ -282,6 +321,12 @@ function gainXP(amount){
 function showLevelModal(){
   if(!player.classKey){ showClassModal(); return; }
   levelModal.style.display = 'block';
+  // Update stats display in level modal
+  document.getElementById('levelStatStr').textContent = player.str;
+  document.getElementById('levelStatDex').textContent = player.dex;
+  document.getElementById('levelStatPer').textContent = player.per;
+  document.getElementById('levelStatMana').textContent = player.manaStat;
+  document.getElementById('levelStatVit').textContent = player.vit;
 }
 function hideLevelModal(){ levelModal.style.display = 'none'; }
 
@@ -296,8 +341,23 @@ function hideClassModal(){
 function selectClass(classKey){
   player.classKey = classKey;
   player.class = CLASSES[classKey].name;
+  player.abilities = CLASSES[classKey].abilities;
   hideClassModal();
+  updateAbilitiesUI();
   updateUI();
+}
+
+function updateAbilitiesUI(){
+  const abilitiesDiv = document.querySelector('.abilities');
+  abilitiesDiv.innerHTML = '';
+  if(player.abilities && player.abilities.length > 0){
+    player.abilities.forEach(ability => {
+      const el = document.createElement('div');
+      el.className = 'ability';
+      el.innerHTML = `<b>${ability.name}</b> ${ability.key === 'click' ? 'Click to activate' : `Press <kbd>${ability.key}</kbd>`}<br><span class="muted">Cost: ${ability.cost}</span>`;
+      abilitiesDiv.appendChild(el);
+    });
+  }
 }
 
 function applyClassBonus(){
@@ -322,7 +382,6 @@ document.getElementById('addDex').addEventListener('click', ()=>{ applyClassBonu
 document.getElementById('addPer').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
 document.getElementById('addMana').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
 document.getElementById('addVit').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
-document.getElementById('closeLevel').addEventListener('click', hideLevelModal);
 
 // Loot modal
 document.getElementById('takeLoot').addEventListener('click', ()=>{ player.inv = []; lootModal.style.display='none'; updateUI(); });

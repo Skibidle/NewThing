@@ -30,13 +30,9 @@
 
 		<div class="right-ui" id="rightUI">
 			<h4 style="margin:0 0 8px 0;color:var(--accent)">Abilities</h4>
-			<div class="abilities">
-				<div class="ability"> <b>Mana Bolt</b> Click to fire mana projectile<br><span class="muted">Cost: 6 Mana</span></div>
-				<div class="ability"> <b>Shade Step</b> Press <kbd>E</kbd> to dash<br><span class="muted">Cost: 10 Mana</span></div>
-				<div class="ability"> <b>Hunter's Focus</b> Passive — increases Perception</div>
-			</div>
+			<div class="abilities"></div>
 			<div style="margin-top:12px">
-				<div class="muted">Quick Keys: Click=ManaBolt · E=ShadeStep · L=Open Level Up</div>
+				<div class="muted">Quick Keys: L=Open Level Up</div>
 			</div>
 		</div>
 
@@ -56,15 +52,14 @@
 
 		<div class="modal" id="levelModal">
 			<h2>Level Up</h2>
-			<div class="muted">Choose a stat point to allocate</div>
-			<div style="margin-top:10px;display:flex;gap:8px">
-				<button class="btn" id="addStr">+ STR</button>
-				<button class="btn" id="addDex">+ DEX</button>
-				<button class="btn" id="addPer">+ PER</button>
-				<button class="btn" id="addMana">+ MANA</button>
-				<button class="btn" id="addVit">+ VIT</button>
+			<div class="muted">Allocate your stat point</div>
+			<div style="margin-top:12px">
+				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>STR: <b id="levelStatStr">10</b></span> <button class="btn" id="addStr" style="padding:4px 12px;font-size:0.9em">+</button></div>
+				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>DEX: <b id="levelStatDex">10</b></span> <button class="btn" id="addDex" style="padding:4px 12px;font-size:0.9em">+</button></div>
+				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>PER: <b id="levelStatPer">10</b></span> <button class="btn" id="addPer" style="padding:4px 12px;font-size:0.9em">+</button></div>
+				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>MANA: <b id="levelStatMana">10</b></span> <button class="btn" id="addMana" style="padding:4px 12px;font-size:0.9em">+</button></div>
+				<div class="stat-row" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span>VIT: <b id="levelStatVit">10</b></span> <button class="btn" id="addVit" style="padding:4px 12px;font-size:0.9em">+</button></div>
 			</div>
-			<div style="margin-top:12px"><button class="btn" id="closeLevel">Close</button></div>
 		</div>
 
 		<div class="modal" id="lootModal">
