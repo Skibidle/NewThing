@@ -62,11 +62,6 @@ const CLASSES = {
 };
 
 // UI elements
-const xpBar = document.getElementById('xpBar');
-const levelEl = document.getElementById('level');
-const xpEl = document.getElementById('xp');
-const xpNextEl = document.getElementById('xpNext');
-const className = document.getElementById('className');
 const hpEl = document.getElementById('hp');
 const manaEl = document.getElementById('mana');
 
@@ -138,18 +133,10 @@ function spawnEnemy(type, x=null,y=null){
 }
 
 // Explore button is informational now (enemies spawn automatically)
-document.getElementById('exploreBtn').addEventListener('click',()=>{
-  alert('The wilds are restless. Enemies spawn on their own — hunt and survive.');
-});
+// Removed - button no longer in DOM
 
 // Camp button: rest for heal/mana/stamina
-document.getElementById('campBtn').addEventListener('click',()=>{
-  player.hp = Math.min(player.maxHp, player.hp + Math.round(10 + player.vit*0.5));
-  player.mana = Math.min(player.maxMana, player.mana + Math.round(12 + player.manaStat*0.6));
-  player.stam = Math.min(player.maxStam, player.stam + 20);
-  alert('You rest at a small campfire — healing, mana and stamina restored.');
-  updateUI();
-});
+// Removed - button no longer in DOM
 
 // Basic input (mouse screen coords; we'll derive world coords via camera each frame)
 let mouse = {x:0,y:0,down:false, worldX:0, worldY:0};
@@ -379,14 +366,10 @@ function applyClassBonus(){
   player.speed += bonus.dex * 0.15;
 }
 
-document.getElementById('addStr').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.str++; player.maxHp += 4; player.hp += 4; updateUI(); } });
-document.getElementById('addDex').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.dex++; player.speed += 0.15; updateUI(); } });
-document.getElementById('addPer').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.per++; updateUI(); } });
-document.getElementById('addMana').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.manaStat += 1; player.maxMana += 6; player.mana += 6; updateUI(); } });
-document.getElementById('addVit').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.vit++; player.maxHp += 6; player.hp += 6; updateUI(); } });
+// Stat button click handlers removed - buttons no longer in main DOM (moved to stat screen)
 
 // Loot modal
-document.getElementById('takeLoot').addEventListener('click', ()=>{ player.inv = []; lootModal.style.display='none'; updateUI(); });
+// Loot modal button removed - handled via lootModal element directly
 
 function openLoot(){
   lootList.innerHTML='';
@@ -417,6 +400,8 @@ function draw(){
 }
 
 function drawHUD(){
+  if(!ctx) return; // Early return if context isn't available
+  
   // Top-left: Health, Stamina, Mana bars
   const barWidth = 150, barHeight = 12, padding = 12, gap = 6;
   let y = padding;
@@ -425,7 +410,8 @@ function drawHUD(){
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.fillRect(padding, y, barWidth, barHeight);
   ctx.fillStyle = '#ff4444';
-  ctx.fillRect(padding, y, barWidth * Math.max(0, player.hp/player.maxHp), barHeight);
+  const hpRatio = Math.max(0, Math.min(1, player.hp / (player.maxHp || 50)));
+  ctx.fillRect(padding, y, barWidth * hpRatio, barHeight);
   ctx.fillStyle = '#fff';
   ctx.font = '11px Inter';
   ctx.fillText(`HP: ${Math.round(player.hp)}/${player.maxHp}`, padding + 4, y + 10);
@@ -435,7 +421,8 @@ function drawHUD(){
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.fillRect(padding, y, barWidth, barHeight);
   ctx.fillStyle = '#ffaa44';
-  ctx.fillRect(padding, y, barWidth * Math.max(0, player.stam/player.maxStam), barHeight);
+  const stamRatio = Math.max(0, Math.min(1, player.stam / (player.maxStam || 100)));
+  ctx.fillRect(padding, y, barWidth * stamRatio, barHeight);
   ctx.fillStyle = '#fff';
   ctx.fillText(`STAM: ${Math.round(player.stam)}/${player.maxStam}`, padding + 4, y + 10);
   y += barHeight + gap;
@@ -444,7 +431,8 @@ function drawHUD(){
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.fillRect(padding, y, barWidth, barHeight);
   ctx.fillStyle = '#6dd5ff';
-  ctx.fillRect(padding, y, barWidth * Math.max(0, player.mana/player.maxMana), barHeight);
+  const manaRatio = Math.max(0, Math.min(1, player.mana / (player.maxMana || 30)));
+  ctx.fillRect(padding, y, barWidth * manaRatio, barHeight);
   ctx.fillStyle = '#fff';
   ctx.fillText(`MANA: ${Math.round(player.mana)}/${player.maxMana}`, padding + 4, y + 10);
   
@@ -455,9 +443,9 @@ function drawHUD(){
   
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.fillRect(centerX, levelBarY, levelBarWidth, levelBarHeight);
-  ctx.fillStyle = 'var(--accent)';
+  const xpRatio = Math.max(0, Math.min(1, player.xp / (player.xpNext || 100)));
   ctx.fillStyle = '#6dd5ff';
-  ctx.fillRect(centerX, levelBarY, levelBarWidth * (player.xp / player.xpNext), levelBarHeight);
+  ctx.fillRect(centerX, levelBarY, levelBarWidth * xpRatio, levelBarHeight);
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 12px Inter';
   ctx.textAlign = 'center';
