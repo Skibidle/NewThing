@@ -404,39 +404,48 @@ function draw(){
 function drawHUD(){
   if(!ctx) return; // Early return if context isn't available
   
-  // Top-left: Health, Stamina, Mana bars
-  const barWidth = 150, barHeight = 12, padding = 12, gap = 6;
+  // Top-left: Health, Stamina, Mana bars with better styling
+  const barWidth = 180, barHeight = 14, padding = 14, gap = 8;
   let y = padding;
   
+  // Background panel for stats
+  ctx.fillStyle = 'rgba(15, 25, 40, 0.6)';
+  ctx.fillRect(padding - 6, y - 6, barWidth + 12, 90);
+  ctx.strokeStyle = 'rgba(100, 180, 255, 0.3)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(padding - 6, y - 6, barWidth + 12, 90);
+  
   // Health bar
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillStyle = 'rgba(60, 20, 20, 0.7)';
   ctx.fillRect(padding, y, barWidth, barHeight);
-  ctx.fillStyle = '#ff4444';
+  ctx.fillStyle = '#ff5555';
   const hpRatio = Math.max(0, Math.min(1, player.hp / (player.maxHp || 50)));
   ctx.fillRect(padding, y, barWidth * hpRatio, barHeight);
   ctx.fillStyle = '#fff';
-  ctx.font = '11px Inter';
-  ctx.fillText(`HP: ${Math.round(player.hp)}/${player.maxHp}`, padding + 4, y + 10);
+  ctx.font = 'bold 10px Inter';
+  ctx.fillText(`HP: ${Math.round(player.hp)}/${player.maxHp}`, padding + 4, y + 11);
   y += barHeight + gap;
   
   // Stamina bar
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillStyle = 'rgba(60, 45, 20, 0.7)';
   ctx.fillRect(padding, y, barWidth, barHeight);
-  ctx.fillStyle = '#ffaa44';
+  ctx.fillStyle = '#ffcc66';
   const stamRatio = Math.max(0, Math.min(1, player.stam / (player.maxStam || 100)));
   ctx.fillRect(padding, y, barWidth * stamRatio, barHeight);
   ctx.fillStyle = '#fff';
-  ctx.fillText(`STAM: ${Math.round(player.stam)}/${player.maxStam}`, padding + 4, y + 10);
+  ctx.font = 'bold 10px Inter';
+  ctx.fillText(`STAM: ${Math.round(player.stam)}/${player.maxStam}`, padding + 4, y + 11);
   y += barHeight + gap;
   
   // Mana bar
-  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillStyle = 'rgba(20, 40, 60, 0.7)';
   ctx.fillRect(padding, y, barWidth, barHeight);
   ctx.fillStyle = '#6dd5ff';
   const manaRatio = Math.max(0, Math.min(1, player.mana / (player.maxMana || 30)));
   ctx.fillRect(padding, y, barWidth * manaRatio, barHeight);
   ctx.fillStyle = '#fff';
-  ctx.fillText(`MANA: ${Math.round(player.mana)}/${player.maxMana}`, padding + 4, y + 10);
+  ctx.font = 'bold 10px Inter';
+  ctx.fillText(`MANA: ${Math.round(player.mana)}/${player.maxMana}`, padding + 4, y + 11);
   
   // Top-middle: Level/XP bar
   const levelBarWidth = 200, levelBarHeight = 16;
@@ -519,13 +528,6 @@ function updateStatScreenUI(){
   document.getElementById('screenPer').textContent = player.per;
   document.getElementById('screenMana').textContent = player.manaStat;
   document.getElementById('screenVit').textContent = player.vit;
-  
-  // Derived stats
-  document.getElementById('screenHp').textContent = `${Math.round(player.hp)} / ${player.maxHp}`;
-  document.getElementById('screenStam').textContent = `${Math.round(player.stam)} / ${player.maxStam}`;
-  document.getElementById('screenManaPool').textContent = `${Math.round(player.mana)} / ${player.maxMana}`;
-  document.getElementById('screenSpeed').textContent = player.speed.toFixed(2);
-  document.getElementById('screenCritChance').textContent = '0%'; // placeholder
   
   // Progression
   document.getElementById('screenLevel').textContent = player.level;
