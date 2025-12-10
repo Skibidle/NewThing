@@ -13,7 +13,7 @@ const CLASSES = {
     name: 'Warrior',
     description: '+2 STR, +1 VIT per level',
     bonuses: { str: 2, dex: 0, per: 0, manaStat: 0, vit: 1 },
-    freeStatPoints: 3,
+    autoAlloc: 'str',
     abilities: [
       { name: 'Cleave', key: 'click', cost: '8 Mana', desc: 'Slash with great force' },
       { name: 'Fortify', key: 'E', cost: '12 Mana', desc: 'Temporary damage reduction' }
@@ -23,7 +23,7 @@ const CLASSES = {
     name: 'Rogue',
     description: '+2 DEX, +1 PER per level',
     bonuses: { str: 0, dex: 2, per: 1, manaStat: 0, vit: 0 },
-    freeStatPoints: 4,
+    autoAlloc: 'dex',
     abilities: [
       { name: 'Backstab', key: 'click', cost: '5 Mana', desc: 'Quick deadly strike' },
       { name: 'Shadow Step', key: 'E', cost: '8 Mana', desc: 'Teleport a short distance' }
@@ -33,7 +33,7 @@ const CLASSES = {
     name: 'Mage',
     description: '+3 MANA, +1 PER per level',
     bonuses: { str: 0, dex: 0, per: 1, manaStat: 3, vit: 0 },
-    freeStatPoints: 4,
+    autoAlloc: 'mana',
     // Mage only has Mana Bolt as requested
     abilities: [
       { name: 'Mana Bolt', key: 'click', cost: '6 Mana', desc: 'Ranged magical projectile' }
@@ -43,7 +43,7 @@ const CLASSES = {
     name: 'Ranger',
     description: '+1 STR, +1 DEX, +1 PER per level',
     bonuses: { str: 1, dex: 1, per: 1, manaStat: 0, vit: 0 },
-    freeStatPoints: 3,
+    autoAlloc: 'per',
     abilities: [
       { name: 'Arrow Shot', key: 'click', cost: '4 Mana', desc: 'Precise ranged attack' },
       { name: 'Dash', key: 'E', cost: '10 Mana', desc: 'Quick movement' }
@@ -53,7 +53,7 @@ const CLASSES = {
     name: 'Paladin',
     description: '+1 STR, +2 VIT, +1 MANA per level',
     bonuses: { str: 1, dex: 0, per: 0, manaStat: 1, vit: 2 },
-    freeStatPoints: 4,
+    autoAlloc: 'vit',
     abilities: [
       { name: 'Holy Strike', key: 'click', cost: '8 Mana', desc: 'Blessed melee attack' },
       { name: 'Light Shield', key: 'E', cost: '10 Mana', desc: 'Defensive barrier' }
@@ -90,7 +90,7 @@ const player = {
   stam:100, maxStam:100,
   str:10, dex:10, per:10, manaStat:10, vit:10,
   level:1, xp:0, xpNext:100, class:null, classKey:null, inv:[],
-  speed:2, abilities:[], freeStatPoints:0, pendingStatPoints:0,
+  speed:2, abilities:[], freeStatPoints:0,
 };
 
 function updateUI(){
@@ -109,20 +109,12 @@ function updateUI(){
   invCount.textContent = player.inv.length;
   document.getElementById('stam').textContent = Math.round(player.stam);
   document.getElementById('freePoints').textContent = player.freeStatPoints;
-  document.getElementById('pendingPoints').textContent = player.pendingStatPoints || 0;
-
-  // Update button colors and enabled state based on free/pending points
+  // Update button visual state: highlight when there are free points
   const statButtons = document.querySelectorAll('.btn-stat');
   statButtons.forEach(btn => {
-    // When there are pending points that must be distributed immediately, disable free allocation until done
-    if(player.pendingStatPoints && player.pendingStatPoints > 0) {
-      btn.disabled = true;
-      btn.classList.remove('has-points');
-    } else {
-      btn.disabled = false;
-      if(player.freeStatPoints > 0) btn.classList.add('has-points');
-      else btn.classList.remove('has-points');
-    }
+    btn.disabled = false;
+    if(player.freeStatPoints > 0) btn.classList.add('has-points');
+    else btn.classList.remove('has-points');
   });
 }
 
@@ -340,23 +332,29 @@ function gainXP(amount){
     player.xp -= player.xpNext; 
     player.level += 1; 
     player.xpNext = Math.round(player.xpNext * 1.6);
-    // Give free stat points from class
+    // Apply class per-level bonuses
     if(player.classKey) {
-      player.freeStatPoints += CLASSES[player.classKey].freeStatPoints;
       applyClassBonus();
     }
-    // Give one normal pending stat point that must be allocated now
-    player.pendingStatPoints = (player.pendingStatPoints || 0) + 1;
-    // Show level-up modal and require distribution of pending points
+    // Automatically allocate the normal stat point to the class-preferred stat
+    if(player.classKey && CLASSES[player.classKey].autoAlloc){
+      const target = CLASSES[player.classKey].autoAlloc;
+      if(target === 'str'){ player.str++; player.maxHp += 4; player.hp += 4; }
+      else if(target === 'dex'){ player.dex++; player.speed += 0.15; }
+      else if(target === 'per'){ player.per++; }
+      else if(target === 'mana'){ player.manaStat += 1; player.maxMana += 6; player.mana += 6; }
+      else if(target === 'vit'){ player.vit++; player.maxHp += 6; player.hp += 6; }
+    }
+    // After automatic allocation, award 1 free stat point for the player to spend manually
+    player.freeStatPoints = (player.freeStatPoints || 0) + 1;
+    // show a simple level-up notification (no forced allocation)
     levelModal.style.display = 'block';
   }
 }
 
 function showLevelModal(){
   if(!player.classKey){ showClassModal(); return; }
-  // If there are pending stat points they must be allocated here
   levelModal.style.display = 'block';
-  document.getElementById('pendingPoints').textContent = player.pendingStatPoints || 0;
 }
 function hideLevelModal(){ levelModal.style.display = 'none'; }
 
@@ -372,7 +370,7 @@ function selectClass(classKey){
   player.classKey = classKey;
   player.class = CLASSES[classKey].name;
   player.abilities = CLASSES[classKey].abilities;
-  player.freeStatPoints = CLASSES[classKey].freeStatPoints;
+  player.freeStatPoints = 0;
   hideClassModal();
   updateAbilitiesUI();
   updateUI();
@@ -413,27 +411,6 @@ document.getElementById('addDex').addEventListener('click', ()=>{ if(player.free
 document.getElementById('addPer').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.per++; updateUI(); } });
 document.getElementById('addMana').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.manaStat += 1; player.maxMana += 6; player.mana += 6; updateUI(); } });
 document.getElementById('addVit').addEventListener('click', ()=>{ if(player.freeStatPoints > 0) { player.freeStatPoints--; player.vit++; player.maxHp += 6; player.hp += 6; updateUI(); } });
-
-// Modal allocation (pending) - must be distributed at level up
-function allocatePending(stat){
-  if(!player.pendingStatPoints || player.pendingStatPoints <= 0) return;
-  player.pendingStatPoints--;
-  if(stat === 'str'){ player.str++; player.maxHp += 4; player.hp += 4; }
-  else if(stat === 'dex'){ player.dex++; player.speed += 0.15; }
-  else if(stat === 'per'){ player.per++; }
-  else if(stat === 'mana'){ player.manaStat += 1; player.maxMana += 6; player.mana += 6; }
-  else if(stat === 'vit'){ player.vit++; player.maxHp += 6; player.hp += 6; }
-  // update pending display and UI
-  document.getElementById('pendingPoints').textContent = player.pendingStatPoints;
-  updateUI();
-  if(player.pendingStatPoints <= 0){ levelModal.style.display = 'none'; }
-}
-
-document.getElementById('lvlAddStr').addEventListener('click', ()=> allocatePending('str'));
-document.getElementById('lvlAddDex').addEventListener('click', ()=> allocatePending('dex'));
-document.getElementById('lvlAddPer').addEventListener('click', ()=> allocatePending('per'));
-document.getElementById('lvlAddMana').addEventListener('click', ()=> allocatePending('mana'));
-document.getElementById('lvlAddVit').addEventListener('click', ()=> allocatePending('vit'));
 
 // Loot modal
 document.getElementById('takeLoot').addEventListener('click', ()=>{ player.inv = []; lootModal.style.display='none'; updateUI(); });

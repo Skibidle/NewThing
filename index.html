@@ -14,7 +14,7 @@
 			<h3>System</h3>
 			<div class="muted">Class: <span id="className">Rookie</span> · Level <span id="level">1</span> · XP <span id="xp">0</span>/<span id="xpNext">100</span></div>
 			<div style="height:8px;margin-top:8px" class="bar"><i id="xpBar" style="width:0%"></i></div>
-			<div class="muted" style="margin-top:6px;font-size:12px">Free Points: <b id="freePoints" style="color:var(--accent)">0</b> · Pending: <b id="pendingPoints" style="color:#ffd36b">0</b></div>
+			<div class="muted" style="margin-top:6px;font-size:12px">Free Points: <b id="freePoints" style="color:var(--accent)">0</b></div>
 			<div class="stats-vertical" style="margin-top:10px">
 				<div class="stat-row"><span>STR: <b id="statStr">10</b></span> <button class="btn-stat" id="addStr" title="Add stat point">+</button></div>
 				<div class="stat-row"><span>DEX: <b id="statDex">10</b></span> <button class="btn-stat" id="addDex" title="Add stat point">+</button></div>
@@ -53,17 +53,8 @@
 
 		<div class="modal" id="levelModal">
 			<h2>Level Up!</h2>
-			<div class="muted">You must allocate your normal stat point(s) now.</div>
-			<div style="margin-top:12px">
-				<div style="margin-bottom:8px">Pending points: <b id="pendingPoints">0</b></div>
-				<div style="display:flex;gap:8px;flex-wrap:wrap">
-					<button class="btn" id="lvlAddStr">+ STR</button>
-					<button class="btn" id="lvlAddDex">+ DEX</button>
-					<button class="btn" id="lvlAddPer">+ PER</button>
-					<button class="btn" id="lvlAddMana">+ MANA</button>
-					<button class="btn" id="lvlAddVit">+ VIT</button>
-				</div>
-			</div>
+			<div class="muted">You gained a per-level stat increase and received <b>1 free point</b> to spend.</div>
+			<div style="margin-top:12px"><div class="muted">Use the + buttons next to stats to spend your free point.</div></div>
 		</div>
 
 		<div class="modal" id="lootModal">
