@@ -69,15 +69,10 @@ const xpNextEl = document.getElementById('xpNext');
 const className = document.getElementById('className');
 const hpEl = document.getElementById('hp');
 const manaEl = document.getElementById('mana');
-const statStr = document.getElementById('statStr');
-const statDex = document.getElementById('statDex');
-const statPer = document.getElementById('statPer');
-const statMana = document.getElementById('statMana');
-const statVit = document.getElementById('statVit');
-const invCount = document.getElementById('invCount');
 
 // Modals
 const classModal = document.getElementById('classModal');
+const statScreen = document.getElementById('statScreen');
 const lootModal = document.getElementById('lootModal');
 const lootList = document.getElementById('lootList');
 
@@ -93,28 +88,9 @@ const player = {
 };
 
 function updateUI(){
-  levelEl.textContent = player.level;
-  xpEl.textContent = player.xp;
-  xpNextEl.textContent = player.xpNext;
-  xpBar.style.width = Math.min(100, (player.xp/player.xpNext*100))+'%';
-  className.textContent = player.class || 'Choose Class';
   hpEl.textContent = Math.round(player.hp)+'/'+player.maxHp;
   manaEl.textContent = Math.round(player.mana)+'/'+player.maxMana;
-  statStr.textContent = player.str;
-  statDex.textContent = player.dex;
-  statPer.textContent = player.per;
-  statMana.textContent = player.manaStat;
-  statVit.textContent = player.vit;
-  invCount.textContent = player.inv.length;
   document.getElementById('stam').textContent = Math.round(player.stam);
-  document.getElementById('freePoints').textContent = player.freeStatPoints;
-  // Update button visual state: highlight when there are free points
-  const statButtons = document.querySelectorAll('.btn-stat');
-  statButtons.forEach(btn => {
-    btn.disabled = false;
-    if(player.freeStatPoints > 0) btn.classList.add('has-points');
-    else btn.classList.remove('has-points');
-  });
 }
 
 // Projectiles
@@ -210,7 +186,7 @@ function secondAbility(){
 }
 
 addEventListener('keydown', (e)=>{
-  if(e.key==='e' || e.key==='E') secondAbility();
+  if(e.key==='e' || e.key==='E') toggleStatScreen();
   if(e.key==='l' || e.key==='L') showLevelModal();
 });
 
@@ -453,6 +429,68 @@ function drawEnvironment(){
     if(sx < -200 || sx > canvas.width+200) continue;
     ctx.beginPath(); ctx.fillStyle='rgba(90,180,160,0.06)'; ctx.ellipse(sx,sy,90,40,0,0,Math.PI*2); ctx.fill();
   }
+}
+
+// Stat Screen UI functions
+function toggleStatScreen(){
+  if(statScreen.style.display === 'block'){
+    statScreen.style.display = 'none';
+  } else {
+    updateStatScreenUI();
+    statScreen.style.display = 'block';
+  }
+}
+
+function updateStatScreenUI(){
+  // Update stats tab
+  document.getElementById('screenStr').textContent = player.str;
+  document.getElementById('screenDex').textContent = player.dex;
+  document.getElementById('screenPer').textContent = player.per;
+  document.getElementById('screenMana').textContent = player.manaStat;
+  document.getElementById('screenVit').textContent = player.vit;
+  
+  // Derived stats
+  document.getElementById('screenHp').textContent = `${Math.round(player.hp)} / ${player.maxHp}`;
+  document.getElementById('screenManaPool').textContent = `${Math.round(player.mana)} / ${player.maxMana}`;
+  document.getElementById('screenSpeed').textContent = player.speed.toFixed(2);
+  document.getElementById('screenCritChance').textContent = '0%'; // placeholder
+  
+  // Progression
+  document.getElementById('screenLevel').textContent = player.level;
+  document.getElementById('screenXp').textContent = `${player.xp} / ${player.xpNext}`;
+  document.getElementById('screenFreePoints').textContent = player.freeStatPoints;
+  
+  // Update abilities tab
+  const abilitiesList = document.getElementById('screenAbilitiesList');
+  abilitiesList.innerHTML = '';
+  if(player.abilities && player.abilities.length > 0){
+    player.abilities.forEach((ability, idx) => {
+      const el = document.createElement('div');
+      el.className = 'ability-item';
+      el.innerHTML = `<div class="ability-name">${ability.name}</div><div class="ability-cost">Cost: ${ability.cost}</div><div class="muted">${ability.desc || ''}</div>`;
+      abilitiesList.appendChild(el);
+    });
+  } else {
+    abilitiesList.innerHTML = '<div class="muted">No abilities yet. Choose a class to get started.</div>';
+  }
+}
+
+function switchStatTab(tabName){
+  // Hide all tabs
+  document.getElementById('statsTab').classList.remove('active');
+  document.getElementById('abilitiesTab').classList.remove('active');
+  document.getElementById('equipmentTab').classList.remove('active');
+  
+  // Deactivate all tab buttons
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  
+  // Show selected tab and activate button
+  const tabId = tabName + 'Tab';
+  if(document.getElementById(tabId)){
+    document.getElementById(tabId).classList.add('active');
+  }
+  // Activate corresponding button
+  event.target.classList.add('active');
 }
 
 // main loop

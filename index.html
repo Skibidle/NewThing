@@ -10,34 +10,7 @@
 	<div id="game">
 		<canvas id="canvas"></canvas>
 
-		<div class="system" id="systemUI">
-			<h3>System</h3>
-			<div class="muted">Class: <span id="className">Rookie</span> · Level <span id="level">1</span> · XP <span id="xp">0</span>/<span id="xpNext">100</span></div>
-			<div style="height:8px;margin-top:8px" class="bar"><i id="xpBar" style="width:0%"></i></div>
-			<div class="muted" style="margin-top:6px;font-size:12px">Free Points: <b id="freePoints" style="color:var(--accent)">0</b></div>
-			<div class="stats-vertical" style="margin-top:10px">
-				<div class="stat-row"><span>STR: <b id="statStr">10</b></span> <button class="btn-stat" id="addStr" title="Add stat point">+</button></div>
-				<div class="stat-row"><span>DEX: <b id="statDex">10</b></span> <button class="btn-stat" id="addDex" title="Add stat point">+</button></div>
-				<div class="stat-row"><span>PER: <b id="statPer">10</b></span> <button class="btn-stat" id="addPer" title="Add stat point">+</button></div>
-				<div class="stat-row"><span>MANA: <b id="statMana">10</b></span> <button class="btn-stat" id="addMana" title="Add stat point">+</button></div>
-				<div class="stat-row"><span>VIT: <b id="statVit">10</b></span> <button class="btn-stat" id="addVit" title="Add stat point">+</button></div>
-			</div>
-			<div style="margin-top:8px" class="muted">Inventory: <span id="invCount">0</span> · Crafting hints visible at camp</div>
-			<div style="margin-top:8px">
-				<button class="btn" id="exploreBtn">Explore</button>
-				<button class="btn" id="campBtn" style="background:linear-gradient(180deg,#3cd6a6,#118a6a)">Camp</button>
-			</div>
-		</div>
-
-		<div class="right-ui" id="rightUI">
-			<h4 style="margin:0 0 8px 0;color:var(--accent)">Abilities</h4>
-			<div class="abilities"></div>
-			<div style="margin-top:12px">
-				<div class="muted">Quick Keys: L=Open Level Up</div>
-			</div>
-		</div>
-
-		<div class="hud-small" id="hudSmall">HP: <span id="hp">50</span> · MANA: <span id="mana">30</span> · STAM: <span id="stam">100</span></div>
+		<div class="hud-main" id="hudMain">HP: <span id="hp">50</span> · MANA: <span id="mana">30</span> · STAM: <span id="stam">100</span></div>
 
 		<div class="modal" id="classModal">
 			<h2>Choose Your Class</h2>
@@ -52,6 +25,58 @@
 		</div>
 
 		<!-- level modal removed: level-up notification now handled in-game without a blocking prompt -->
+
+		<div class="modal" id="statScreen">
+			<div class="stat-screen-header">
+				<h2>Character Stats</h2>
+				<button class="close-btn" onclick="toggleStatScreen()" title="Close (E)">✕</button>
+			</div>
+			<div class="stat-screen-tabs">
+				<button class="tab-btn active" onclick="switchStatTab('stats')">Stats</button>
+				<button class="tab-btn" onclick="switchStatTab('abilities')">Abilities</button>
+				<button class="tab-btn" onclick="switchStatTab('equipment')">Equipment</button>
+			</div>
+			<div class="stat-screen-content">
+				<!-- Stats Tab -->
+				<div id="statsTab" class="tab-content active">
+					<div class="stat-screen-section">
+						<h3 style="margin-top:0">Core Stats</h3>
+						<div class="stat-detail-row"><span>Strength (STR)</span><span id="screenStr">10</span></div>
+						<div class="stat-detail-row"><span>Dexterity (DEX)</span><span id="screenDex">10</span></div>
+						<div class="stat-detail-row"><span>Perception (PER)</span><span id="screenPer">10</span></div>
+						<div class="stat-detail-row"><span>Mana (MANA)</span><span id="screenMana">10</span></div>
+						<div class="stat-detail-row"><span>Vitality (VIT)</span><span id="screenVit">10</span></div>
+					</div>
+					<div class="stat-screen-section">
+						<h3>Derived Stats</h3>
+						<div class="stat-detail-row"><span>Health</span><span id="screenHp">50 / 50</span></div>
+						<div class="stat-detail-row"><span>Mana Pool</span><span id="screenManaPool">30 / 30</span></div>
+						<div class="stat-detail-row"><span>Attack Speed</span><span id="screenSpeed">2.0</span></div>
+						<div class="stat-detail-row"><span>Crit Chance</span><span id="screenCritChance">0%</span></div>
+					</div>
+					<div class="stat-screen-section">
+						<h3>Progression</h3>
+						<div class="stat-detail-row"><span>Level</span><span id="screenLevel">1</span></div>
+						<div class="stat-detail-row"><span>Experience</span><span id="screenXp">0 / 100</span></div>
+						<div class="stat-detail-row"><span>Free Points</span><span id="screenFreePoints" style="color:var(--accent)">0</span></div>
+					</div>
+				</div>
+				<!-- Abilities Tab -->
+				<div id="abilitiesTab" class="tab-content">
+					<div class="stat-screen-section">
+						<h3 style="margin-top:0">Active Abilities</h3>
+						<div id="screenAbilitiesList" class="abilities-list"></div>
+					</div>
+				</div>
+				<!-- Equipment Tab (placeholder for future) -->
+				<div id="equipmentTab" class="tab-content">
+					<div class="stat-screen-section">
+						<h3 style="margin-top:0">Equipment</h3>
+						<div class="muted">Equipment system coming soon.</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div class="modal" id="lootModal">
 			<h2>Loot</h2>
