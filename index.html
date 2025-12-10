@@ -42,6 +42,18 @@
 
 		<div class="hud-small" id="hudSmall">HP: <span id="hp">50</span> · MANA: <span id="mana">30</span> · STAM: <span id="stam">100</span></div>
 
+		<div class="modal" id="classModal">
+			<h2>Choose Your Class</h2>
+			<div class="muted">Each class grants different stat bonuses per level. All start with 10 in each stat.</div>
+			<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+				<button class="btn" onclick="selectClass('warrior')" style="text-align:left"><div><b>⚔ Warrior</b></div><div class="muted" style="font-size:0.85em">+2 STR, +1 VIT</div></button>
+				<button class="btn" onclick="selectClass('rogue')" style="text-align:left"><div><b>🗡 Rogue</b></div><div class="muted" style="font-size:0.85em">+2 DEX, +1 PER</div></button>
+				<button class="btn" onclick="selectClass('mage')" style="text-align:left"><div><b>✨ Mage</b></div><div class="muted" style="font-size:0.85em">+3 MANA, +1 PER</div></button>
+				<button class="btn" onclick="selectClass('ranger')" style="text-align:left"><div><b>🏹 Ranger</b></div><div class="muted" style="font-size:0.85em">+1 STR/DEX/PER</div></button>
+				<button class="btn" onclick="selectClass('paladin')" style="text-align:left;grid-column:1/3"><div><b>⚡ Paladin</b></div><div class="muted" style="font-size:0.85em">+1 STR, +2 VIT, +1 MANA</div></button>
+			</div>
+		</div>
+
 		<div class="modal" id="levelModal">
 			<h2>Level Up</h2>
 			<div class="muted">Choose a stat point to allocate</div>

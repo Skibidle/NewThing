@@ -7,6 +7,35 @@ addEventListener('resize', resize); resize();
 // world bounds
 const WORLD = { w: 3000, h: 2000 };
 
+// Class definitions with stat bonuses per level
+const CLASSES = {
+  warrior: {
+    name: 'Warrior',
+    description: '+2 STR, +1 VIT per level',
+    bonuses: { str: 2, dex: 0, per: 0, manaStat: 0, vit: 1 }
+  },
+  rogue: {
+    name: 'Rogue',
+    description: '+2 DEX, +1 PER per level',
+    bonuses: { str: 0, dex: 2, per: 1, manaStat: 0, vit: 0 }
+  },
+  mage: {
+    name: 'Mage',
+    description: '+3 MANA, +1 PER per level',
+    bonuses: { str: 0, dex: 0, per: 1, manaStat: 3, vit: 0 }
+  },
+  ranger: {
+    name: 'Ranger',
+    description: '+1 STR, +1 DEX, +1 PER per level',
+    bonuses: { str: 1, dex: 1, per: 1, manaStat: 0, vit: 0 }
+  },
+  paladin: {
+    name: 'Paladin',
+    description: '+1 STR, +2 VIT, +1 MANA per level',
+    bonuses: { str: 1, dex: 0, per: 0, manaStat: 1, vit: 2 }
+  }
+};
+
 // UI elements
 const xpBar = document.getElementById('xpBar');
 const levelEl = document.getElementById('level');
@@ -23,6 +52,7 @@ const statVit = document.getElementById('statVit');
 const invCount = document.getElementById('invCount');
 
 // Modals
+const classModal = document.getElementById('classModal');
 const levelModal = document.getElementById('levelModal');
 const lootModal = document.getElementById('lootModal');
 const lootList = document.getElementById('lootList');
@@ -33,8 +63,8 @@ const player = {
   vx:0, vy:0, maxSpeed:3,
   hp:50, maxHp:50, mana:30, maxMana:30,
   stam:100, maxStam:100,
-  str:3,dex:3,per:3,manaStat:10,vit:10,
-  level:1, xp:0, xpNext:100, class:'Rookie', inv:[],
+  str:10, dex:10, per:10, manaStat:10, vit:10,
+  level:1, xp:0, xpNext:100, class:null, classKey:null, inv:[],
   speed:2,
 };
 
@@ -43,7 +73,7 @@ function updateUI(){
   xpEl.textContent = player.xp;
   xpNextEl.textContent = player.xpNext;
   xpBar.style.width = Math.min(100, (player.xp/player.xpNext*100))+'%';
-  className.textContent = player.class;
+  className.textContent = player.class || 'Choose Class';
   hpEl.textContent = Math.round(player.hp)+'/'+player.maxHp;
   manaEl.textContent = Math.round(player.mana)+'/'+player.maxMana;
   statStr.textContent = player.str;
@@ -249,14 +279,49 @@ function gainXP(amount){
   while(player.xp >= player.xpNext){ player.xp -= player.xpNext; player.level += 1; player.xpNext = Math.round(player.xpNext * 1.6); showLevelModal(); }
 }
 
-function showLevelModal(){ levelModal.style.display = 'block'; }
+function showLevelModal(){
+  if(!player.classKey){ showClassModal(); return; }
+  levelModal.style.display = 'block';
+}
 function hideLevelModal(){ levelModal.style.display = 'none'; }
 
-document.getElementById('addStr').addEventListener('click', ()=>{ player.str++; player.maxHp += 4; player.hp +=4; hideLevelModal(); updateUI(); });
-document.getElementById('addDex').addEventListener('click', ()=>{ player.dex++; player.speed += 0.15; hideLevelModal(); updateUI(); });
-document.getElementById('addPer').addEventListener('click', ()=>{ player.per++; hideLevelModal(); updateUI(); });
-document.getElementById('addMana').addEventListener('click', ()=>{ player.manaStat += 4; player.maxMana += 6; player.mana +=6; hideLevelModal(); updateUI(); });
-document.getElementById('addVit').addEventListener('click', ()=>{ player.vit++; player.maxHp += 6; player.hp +=6; hideLevelModal(); updateUI(); });
+function showClassModal(){
+  classModal.style.display = 'block';
+}
+
+function hideClassModal(){
+  classModal.style.display = 'none';
+}
+
+function selectClass(classKey){
+  player.classKey = classKey;
+  player.class = CLASSES[classKey].name;
+  hideClassModal();
+  updateUI();
+}
+
+function applyClassBonus(){
+  if(!player.classKey) return;
+  const bonus = CLASSES[player.classKey].bonuses;
+  player.str += bonus.str;
+  player.dex += bonus.dex;
+  player.per += bonus.per;
+  player.manaStat += bonus.manaStat;
+  player.vit += bonus.vit;
+  
+  // Update derived stats
+  player.maxHp += (bonus.str * 4) + (bonus.vit * 6);
+  player.hp = player.maxHp;
+  player.maxMana += bonus.manaStat * 6;
+  player.mana = player.maxMana;
+  player.speed += bonus.dex * 0.15;
+}
+
+document.getElementById('addStr').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
+document.getElementById('addDex').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
+document.getElementById('addPer').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
+document.getElementById('addMana').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
+document.getElementById('addVit').addEventListener('click', ()=>{ applyClassBonus(); hideLevelModal(); updateUI(); });
 document.getElementById('closeLevel').addEventListener('click', hideLevelModal);
 
 // Loot modal
@@ -324,4 +389,7 @@ setInterval(()=>{
 }, 2400 + Math.random()*1200);
 
 // initial placement
-player.x = WORLD.w/2; player.y = WORLD.h/2; updateUI();
+player.x = WORLD.w/2; player.y = WORLD.h/2;
+// Show class selection at start
+showClassModal();
+updateUI();
