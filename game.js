@@ -301,11 +301,11 @@ function gainXP(amount){
     // Automatically allocate the normal stat point to the class-preferred stat
     if(player.classKey && CLASSES[player.classKey].autoAlloc){
       const target = CLASSES[player.classKey].autoAlloc;
-      if(target === 'str'){ player.str++; player.maxHp += 4; player.hp += 4; }
+      if(target === 'str'){ player.str++; player.maxHp += 10; player.hp += 10; }
       else if(target === 'dex'){ player.dex++; player.speed += 0.15; }
       else if(target === 'per'){ player.per++; }
       else if(target === 'mana'){ player.manaStat += 1; player.maxMana += 6; player.mana += 6; }
-      else if(target === 'vit'){ player.vit++; player.maxHp += 6; player.hp += 6; }
+      else if(target === 'vit'){ player.vit++; player.maxHp += 10; player.maxStam += 10; player.hp += 10; player.stam += 10; }
     }
     // After automatic allocation, award 1 free stat point for the player to spend manually
     player.freeStatPoints = (player.freeStatPoints || 0) + 1;
@@ -359,8 +359,10 @@ function applyClassBonus(){
   player.vit += bonus.vit;
   
   // Update derived stats
-  player.maxHp += (bonus.str * 4) + (bonus.vit * 6);
+  player.maxHp += (bonus.str * 10) + (bonus.vit * 10);
   player.hp = player.maxHp;
+  player.maxStam += bonus.vit * 10;
+  player.stam = Math.min(player.stam + (bonus.vit * 10), player.maxStam);
   player.maxMana += bonus.manaStat * 6;
   player.mana = player.maxMana;
   player.speed += bonus.dex * 0.15;
@@ -469,17 +471,34 @@ function drawHUD(){
 }
 
 function drawEnvironment(){
-  const g = ctx.createLinearGradient(0,0,0,canvas.height); g.addColorStop(0,'rgba(12,18,24,0.2)'); g.addColorStop(1,'rgba(0,0,0,0.6)'); ctx.fillStyle = g; ctx.fillRect(0,0,canvas.width,canvas.height);
-  for(let i=0;i<24;i++){
+  // Plains biome background
+  const g = ctx.createLinearGradient(0,0,0,canvas.height); 
+  g.addColorStop(0,'rgba(135,206,235,0.3)'); // sky blue
+  g.addColorStop(1,'rgba(85,180,100,0.2)'); // grass green
+  ctx.fillStyle = g; 
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // Grass patches (plains)
+  for(let i=0;i<40;i++){
     const wx = (i*373) % WORLD.w; const wy = ((i*137) % WORLD.h);
     const sx = wx - camera.x; const sy = wy - camera.y;
     if(sx < -120 || sx > canvas.width+120 || sy < -80 || sy > canvas.height+80) continue;
-    ctx.beginPath(); ctx.fillStyle = 'rgba(70,120,220,0.03)'; ctx.ellipse(sx,sy,60,24,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.fillStyle = 'rgba(100,180,80,0.15)'; ctx.ellipse(sx,sy,80,40,0,0,Math.PI*2); ctx.fill();
   }
-  for(let i=0;i<14;i++){
-    const fx = (i*199)%WORLD.w; const fy = WORLD.h - 40 - (i%4)*30; const sx = fx - camera.x; const sy = fy - camera.y;
-    if(sx < -200 || sx > canvas.width+200) continue;
-    ctx.beginPath(); ctx.fillStyle='rgba(90,180,160,0.06)'; ctx.ellipse(sx,sy,90,40,0,0,Math.PI*2); ctx.fill();
+  
+  // Trees scattered (plains)
+  for(let i=0;i<8;i++){
+    const fx = (i*587)%WORLD.w; const fy = (i*431)%WORLD.h; 
+    const sx = fx - camera.x; const sy = fy - camera.y;
+    if(sx < -60 || sx > canvas.width+60 || sy < -60 || sy > canvas.height+60) continue;
+    // Tree trunk
+    ctx.fillStyle='rgba(101,67,33,0.4)';
+    ctx.fillRect(sx-4, sy, 8, 30);
+    // Tree foliage
+    ctx.fillStyle='rgba(34,139,34,0.4)';
+    ctx.beginPath();
+    ctx.arc(sx, sy-5, 20, 0, Math.PI*2);
+    ctx.fill();
   }
 }
 
