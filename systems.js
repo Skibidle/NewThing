@@ -112,8 +112,6 @@ class PlayerSystem {
     if (!silent && this.player.freeStatPoints <= 0) return false;
     if (!silent) this.player.freeStatPoints--;
     
-    const scaling = getStatScaling(stat, this.player[stat]);
-    
     switch (stat) {
       case 'str':
         this.player.str++;
