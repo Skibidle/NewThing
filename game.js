@@ -416,6 +416,70 @@ function draw(){
   ctx.beginPath(); ctx.strokeStyle='rgba(180,230,255,0.4)'; ctx.arc(mouse.x, mouse.y, 10, 0, Math.PI*2); ctx.stroke();
 }
 
+function drawHUD(){
+  // Top-left: Health, Stamina, Mana bars
+  const barWidth = 150, barHeight = 12, padding = 12, gap = 6;
+  let y = padding;
+  
+  // Health bar
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(padding, y, barWidth, barHeight);
+  ctx.fillStyle = '#ff4444';
+  ctx.fillRect(padding, y, barWidth * Math.max(0, player.hp/player.maxHp), barHeight);
+  ctx.fillStyle = '#fff';
+  ctx.font = '11px Inter';
+  ctx.fillText(`HP: ${Math.round(player.hp)}/${player.maxHp}`, padding + 4, y + 10);
+  y += barHeight + gap;
+  
+  // Stamina bar
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(padding, y, barWidth, barHeight);
+  ctx.fillStyle = '#ffaa44';
+  ctx.fillRect(padding, y, barWidth * Math.max(0, player.stam/player.maxStam), barHeight);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`STAM: ${Math.round(player.stam)}/${player.maxStam}`, padding + 4, y + 10);
+  y += barHeight + gap;
+  
+  // Mana bar
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(padding, y, barWidth, barHeight);
+  ctx.fillStyle = '#6dd5ff';
+  ctx.fillRect(padding, y, barWidth * Math.max(0, player.mana/player.maxMana), barHeight);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`MANA: ${Math.round(player.mana)}/${player.maxMana}`, padding + 4, y + 10);
+  
+  // Top-middle: Level/XP bar
+  const levelBarWidth = 200, levelBarHeight = 16;
+  const centerX = canvas.width / 2 - levelBarWidth / 2;
+  const levelBarY = padding;
+  
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(centerX, levelBarY, levelBarWidth, levelBarHeight);
+  ctx.fillStyle = 'var(--accent)';
+  ctx.fillStyle = '#6dd5ff';
+  ctx.fillRect(centerX, levelBarY, levelBarWidth * (player.xp / player.xpNext), levelBarHeight);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 12px Inter';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Level ${player.level} - ${player.xp}/${player.xpNext} XP`, centerX + levelBarWidth / 2, levelBarY + 12);
+  ctx.textAlign = 'left';
+  
+  // Bottom-left: Shortcut notices
+  const shortcutY = canvas.height - 60;
+  const shortcuts = [
+    'E - Stats',
+    'Click - Attack',
+    'W/A/S/D - Move',
+    'Shift - Sprint'
+  ];
+  
+  ctx.font = '11px Inter';
+  ctx.fillStyle = 'rgba(180,200,220,0.7)';
+  shortcuts.forEach((text, idx) => {
+    ctx.fillText(text, padding, shortcutY + (idx * 14));
+  });
+}
+
 function drawEnvironment(){
   const g = ctx.createLinearGradient(0,0,0,canvas.height); g.addColorStop(0,'rgba(12,18,24,0.2)'); g.addColorStop(1,'rgba(0,0,0,0.6)'); ctx.fillStyle = g; ctx.fillRect(0,0,canvas.width,canvas.height);
   for(let i=0;i<24;i++){
@@ -498,7 +562,7 @@ function loop(){
   // compute mouse world coords
   mouse.worldX = camera.x + mouse.x;
   mouse.worldY = camera.y + mouse.y;
-  update(); draw(); requestAnimationFrame(loop);
+  update(); draw(); drawHUD(); requestAnimationFrame(loop);
 }
 loop();
 
